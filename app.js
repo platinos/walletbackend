@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var testdb = require('./routes/testdb');
 
 var app = express();
 
@@ -20,16 +21,19 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// connect to our database
-var mongoose = require('mongoose');
+//Database connection
+global.mongoose = require('mongoose');
 mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
   .then(() => console.log('connection succesful'))
   .catch((err) => console.error(err));
 
 
 
+
+
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/test', testdb);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

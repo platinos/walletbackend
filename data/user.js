@@ -5,13 +5,13 @@ const Schema = mongoose.Schema;
 
 var userSchema = new Schema({
         name:String,
-        email:String,
+        email:{type:String,default:null},
         phone:String,
         password:String,
         displayPic:String,
         created:Date,
         lastLogin:Date,
-        active:{type:boolean,default:false}
+        active:{type:Boolean,default:false}
       
     });
 
