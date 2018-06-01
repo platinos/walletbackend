@@ -27,22 +27,21 @@ router.post('/login', function (req, res) {
 });
 
 router.post('/signup', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
   var name = req.body.name;
-  var uname = req.body.uname;
   var email = req.body.email;
-  var type = req.body.type;
+  var active = req.body.active;
+  var data = {"name":name,"email":email,"active":active}
+   var result =  postUser(data);
+   console.log(result);
+   res.send(JSON.stringify({"status":200,"response":result}));
 
-  postUser(data)
-
-
-});
+  });
 
 router.post('/', function (req, res) {
   var name = req.body.name;
-  var uname = req.body.uname;
   var email = req.body.email;
-  var type = req.body.type;
-
+  var data = {"name":name,"email":email}
   postUser(data)
 
 
@@ -70,6 +69,22 @@ router.delete('/:id', function (req, res) {
 /* User Router Functions */
 
 function postUser(data) {
+
+  User.create(data,function(err,user){
+
+       if(err){
+         console.log(err);
+       }
+
+        console.log("the user is created with id "+ user._id);
+     return user;
+      
+
+
+  })
+  
+     
+
   
 }
 
