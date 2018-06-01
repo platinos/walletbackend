@@ -1,16 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var user = require('../data/User');
+var Content = require('../data/Content');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
-    user.find(function (err, user) {
+    Content.find({ name1: 'Priyank' }, function (err, user) {
         if (err) throw err;
         if (!user) return res.send(401);
         res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
     });
-    
 });
 
 
