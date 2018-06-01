@@ -32,9 +32,8 @@ router.post('/signup', function (req, res) {
   var email = req.body.email;
   var active = req.body.active;
   var data = {"name":name,"email":email,"active":active}
-   var result =  postUser(data);
+  var result = postUser(data, res);
    console.log(result);
-   res.send(JSON.stringify({"status":200,"response":result}));
 
   });
 
@@ -68,24 +67,16 @@ router.delete('/:id', function (req, res) {
 
 /* User Router Functions */
 
-function postUser(data) {
+function postUser(data, res) {
 
   User.create(data,function(err,user){
-
-       if(err){
+  if(err){
          console.log(err);
+        res.send(JSON.stringify({ "status": 200, "response": err }));
        }
-
-        console.log("the user is created with id "+ user._id);
-     return user;
-      
-
-
-  })
-  
-     
-
-  
+      console.log("the user is created with id "+ user._id);
+      res.send(JSON.stringify({ "status": 201, "response": user }));
+     });
 }
 
 function getAllUsers() {
