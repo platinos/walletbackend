@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  getAllUsers();
+  getAllUsers(res);
 });
 
 
@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/:id', function (req, res, next) {
   var id = req.params.id;
-  getUserById(id);
+  getUserById(id,res);
 });
 
 router.post('/login', function (req, res) {
@@ -41,7 +41,7 @@ router.post('/', function (req, res) {
   var name = req.body.name;
   var email = req.body.email;
   var data = {"name":name,"email":email}
-  postUser(data)
+  postUser(data,res)
 
 
 });
@@ -79,7 +79,14 @@ function postUser(data, res) {
      });
 }
 
-function getAllUsers() {
+function getAllUsers(res) {
+  res.setHeader('Content-Type', 'application/json');
+    User.find(function (err, user) {
+        if (err) throw err;
+        if (!user) return res.send(401);
+        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+    });
+
 
 }
 
@@ -87,7 +94,14 @@ function getUserByUname() {
 
 }
 
-function getUserById(id) {
+function getUserById(id,res) {
+  res.setHeader('Content-Type', 'application/json');
+  User.find({"_id":id},function (err, user) {
+      if (err) throw err;
+      if (!user) return res.send(401);
+      res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+  });
+
 
 }
 
@@ -96,6 +110,8 @@ function updateUserById(id, data) {
 }
 
 function deleteUserById(id) {
+
+
 
 }
 
