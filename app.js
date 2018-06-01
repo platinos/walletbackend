@@ -20,6 +20,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+// connect to our database
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
+  .then(() => console.log('connection succesful'))
+  .catch((err) => console.error(err));
+
+
 
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
