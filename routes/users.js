@@ -18,12 +18,10 @@ router.get('/:id', function (req, res, next) {
 router.post('/login', function (req, res) {
   var pass = req.body.password;
   var uname = req.body.uname;
-
-  getUserByUname(uname);
+     
+  getUserByUname(uname);//uname can be email ,id or number 
 
   
-
-
 });
 
 router.post('/signup', function (req, res) {
@@ -49,11 +47,10 @@ router.post('/', function (req, res) {
 router.put('/:id', function (req, res) {
   var id = req.params.id;
   var name = req.body.name;
-  var uname = req.body.uname;
   var email = req.body.email;
-  var type = req.body.type;
-
-  updateUserById(id, data);
+  var active = req.body.active;
+  var data = {"_id":id,"name":name,"email":email,"active":active}
+  updateUserById(id, data,res);
 
 });
 
@@ -90,14 +87,20 @@ function getAllUsers(res) {
 
 }
 
-function getUserByUname() {
+function getUserByUname(uname) {
+  //uname can be anything
+  //for now only consider email and name
+  //can use regular expression
+
+
+
 
 }
 
 function getUserById(id,res) {
   res.setHeader('Content-Type', 'application/json');
   User.find({"_id":id},function (err, user) {
-      if (err) throw err;
+      if (err) return res.sendStatus(404)
       if (!user) return res.send(401);
       res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
   });
@@ -105,13 +108,23 @@ function getUserById(id,res) {
 
 }
 
-function updateUserById(id, data) {
+function updateUserById(id, data,res) {
+  res.setHeader('Content-Type', 'application/json');
+   User.findByIdAndUpdate(id,data,function(err,user){
+      if(err) return res.sendStatus(404);
+      if(!user) return  res.send(401);
+
+      res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+
+   });
+
+
 
 }
 
 function deleteUserById(id) {
 
-
+   
 
 }
 
