@@ -31,6 +31,7 @@ router.post('/signup', function (req, res) {
   var active = req.body.active;
   var data = {"name":name,"email":email,"active":active}
   var result = postUser(data, res);
+  //Add user Profile
    console.log(result);
 
   });
@@ -39,6 +40,7 @@ router.post('/', function (req, res) {
   var name = req.body.name;
   var email = req.body.email;
   var data = {"name":name,"email":email}
+  //Add user Profile
   postUser(data,res)
 
 
@@ -59,6 +61,7 @@ router.delete('/:id', function (req, res) {
   var id = req.params.id;
   deleteUserById(id)
   res.end("Record Deleted");
+  //Delete user Profile
 });
 
 

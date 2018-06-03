@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
     user.find(function (err, user) {
         if (err) throw err;
         if (!user) return res.send(401);
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+        res.send(JSON.stringify({ "status": 200, "error": null, "response": user, "size": user.length}));
     });
     
 });
