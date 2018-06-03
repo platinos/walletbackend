@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 var contactSchema = new Schema({
 
-    friend:ongoose.Schema.Types.ObjectId,
+    friend:mongoose.Schema.Types.ObjectId,
     date_Added:Date
 
 
