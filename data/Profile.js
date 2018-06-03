@@ -9,7 +9,8 @@ var Profile = new Schema({
        dob:date,
        about:String,
        active:{type: Boolean, Default: TRUE},
-       status:{type:String,default:"hey there i am using Sheq"}
+       status:{type:String,default:"hey there i am using Sheq"},
        // contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'contact'}]
+       contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}]
 
 });
