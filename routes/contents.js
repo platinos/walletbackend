@@ -1,5 +1,5 @@
 var express = require('express');
-var User = require('../data/Content.js')
+var User = require('../data/Contents.js')
 var router = express.Router();
 
 /* GET users listing. */
