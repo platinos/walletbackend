@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var profileRouter = require('./routes/profile');
+var contentRouter = require('./routes/content');
 var testdb = require('./routes/testdb');
 
 var app = express();
@@ -33,6 +35,8 @@ mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynos
 
 app.use('/', indexRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/content', contentRouter);
 app.use('/test', testdb);
 
 // catch 404 and forward to error handler
