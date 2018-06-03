@@ -16,6 +16,10 @@ router.get('/:id', function (req, res, next) {
 });
 
 
+router.get('/contacts/:id', function (req, res, next) {
+    var id = req.params.id;
+    getContactsById(id, res);
+});
 
 
 router.put('/:id', function (req, res) {
@@ -77,8 +81,10 @@ function updateProfileById(id, data, res) {
         res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
 
     });
+}
 
 
+function getContactsById(id, res) {
 
 }
 
