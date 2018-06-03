@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-var Profile = new Schema({
+var ProfileSchema = new Schema({
        _id:mongoose.Schema.Types.ObjectId,
-       userId:mongoose.Schema.Types.ObjectId,
        address:String,
        dob:Date,
        about:String,
@@ -14,3 +13,7 @@ var Profile = new Schema({
        contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}]
 
 });
+
+
+var Profile = mongoose.model("Profile",ProfileSchema);
+module.exports=Profile;
