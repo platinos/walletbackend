@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('../data/User.js')
+var Profile = require('../data/Profile.js')
 var router = express.Router();
 
 /* GET users listing. */
@@ -74,8 +75,16 @@ function postUser(data, res) {
          console.log(err);
         res.send(JSON.stringify({ "status": 200, "response": err }));
        }
-      console.log("the user is created with id "+ user._id);
-      res.send(JSON.stringify({ "status": 201, "response": user }));
+      Profile.create({"_id":user._id},(err,profile)=>{
+
+        if(err) res.sendStatus(403);
+        console.log("the user is created with id "+ user._id);
+        console.log(user._id===profile._id);
+        res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
+
+      });
+
+      
      });
 }
 
