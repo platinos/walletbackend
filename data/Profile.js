@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-
+var User = require('../data/user.js');
 const Schema = mongoose.Schema;
-
+//delete mongoose.connection.models['Profile'];
 var ProfileSchema = new Schema({
        _id:mongoose.Schema.Types.ObjectId,
        address:String,
@@ -10,7 +10,8 @@ var ProfileSchema = new Schema({
        active:{type: Boolean, Default: true},
        status:{type:String,default:"hey there i am using Sheq"},
        // contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'contact'}]
-       contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}]
+       contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
+       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 
 });
 

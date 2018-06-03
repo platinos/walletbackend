@@ -19,7 +19,7 @@ router.get('/:id', function (req, res, next) {
 router.post('/login', function (req, res) {
   var pass = req.body.password;
   var uname = req.body.uname;
-     
+    
   getUserByUname(uname);//uname can be email ,id or number 
 
   
@@ -75,11 +75,14 @@ function postUser(data, res) {
          console.log(err);
         res.send(JSON.stringify({ "status": 200, "response": err }));
        }
-      Profile.create({"_id":user._id},(err,profile)=>{
+
+      
+      Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
 
         if(err) res.sendStatus(403);
         console.log("the user is created with id "+ user._id);
         console.log(user._id===profile._id);
+        
         res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
 
       });
@@ -90,11 +93,7 @@ function postUser(data, res) {
 
 function getAllUsers(res) {
   res.setHeader('Content-Type', 'application/json');
-    User.find(function (err, user) {
-        if (err) throw err;
-        if (!user) return res.send(401);
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
-    });
+   
 
 
 }

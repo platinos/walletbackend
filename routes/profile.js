@@ -1,5 +1,6 @@
 var express = require('express');
 var Profile = require('../data/Profile.js')
+var User = require('../data/user.js')
 var router = express.Router();
 
 /* GET users listing. */
@@ -42,11 +43,17 @@ router.put('/:id', function (req, res) {
 
 function getAllProfiles(res) {
     res.setHeader('Content-Type', 'application/json');
-    User.find(function (err, user) {
-        if (err) throw err;
-        if (!user) return res.send(401);
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+    Profile.find().populate('user').exec(function(err,profile){
+     if(err)   return console.error(err);
+
+     console.log(`The comment is ${profile}`);
+    
+     res.send(JSON.stringify({ "status": 201, "response":profile }));
+
+
+
     });
+
 
 
 }
