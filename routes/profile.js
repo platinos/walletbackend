@@ -19,6 +19,7 @@ router.get('/:id', function (req, res, next) {
 
 router.get('/contacts/:id', function (req, res, next) {
     var id = req.params.id;
+    console.log("the id is "+ id);
     getContactsById(id, res);
 });
 
@@ -28,7 +29,9 @@ router.put('/:id', function (req, res) {
     var address = req.body.address;
     var dob = req.body.dob;
     var active = req.body.active;
-    var data = { /*Fill this*/ }
+    var status= req.body.status;
+    var about = req.body.about;
+    var data = { "_id":id,"address":address,"dob":dob,"active":active,"status":status,"about":about }
     updateProfileById(id, data, res);
 
 });
@@ -70,28 +73,45 @@ function getProfileByUname(uname) {
 
 function getProfileById(id, res) {
     res.setHeader('Content-Type', 'application/json');
-    User.find({ "_id": id }, function (err, user) {
-        if (err) return res.sendStatus(404)
-        if (!user) return res.send(401);
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
-    });
+    Profile.findById(id).populate('user').exec(function(err,profile){
+        if(err)   return console.error(err);
+   
+        //console.log(`The comment is ${profile}`);
+       
+        res.send(JSON.stringify({ "status": 201, "response":profile }));
+   
 
 
+}); 
 }
 
 function updateProfileById(id, data, res) {
     res.setHeader('Content-Type', 'application/json');
-    User.findByIdAndUpdate(id, data, function (err, user) {
+    Profile.findByIdAndUpdate(id, data, function (err, profile) {
         if (err) return res.sendStatus(404);
-        if (!user) return res.send(401);
+        if (!profile) return res.send(401);
 
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+        res.send(JSON.stringify({ "status": 200, "error": null, "response": profile }));
 
     });
 }
 
 
 function getContactsById(id, res) {
+    res.setHeader('Content-Type', 'application/json');
+
+
+
+    Profile.findById().populate('contacts').exec(function (err,profile) {
+    if(err)  return console.error(err);
+    if(profile==null)
+     return  res.send(JSON.stringify({ "status": 200, "error": null, "response": "not wrong" }));
+    
+     res.send(JSON.stringify({ "status": 200, "error": null, "response": profile }));
+
+    })
+
+
 
 }
 

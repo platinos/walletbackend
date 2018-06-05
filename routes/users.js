@@ -93,7 +93,14 @@ function postUser(data, res) {
 
 function getAllUsers(res) {
   res.setHeader('Content-Type', 'application/json');
-   
+  User.find((err,user)=>{
+   if(err)   res.send(JSON.stringify({ "error":"no user data", "response": null}));
+
+   res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+
+
+
+  }) 
 
 
 }

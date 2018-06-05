@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 var contactSchema = new Schema({
 
     friend:mongoose.Schema.Types.ObjectId,
-    date_Added:Date
+    date_Added:{type:Date,default:Date.now}
 
 
 })
