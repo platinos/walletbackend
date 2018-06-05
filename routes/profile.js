@@ -103,10 +103,10 @@ function updateProfileById(id, data, res) {
 function getContactsById(id, res) {
     res.setHeader('Content-Type', 'application/json');
 
-    Profile.findById().populate('contacts').exec(function (err,profile) {
+    Profile.findById(id).populate('contacts').exec(function (err,profile) {
     if(err)  return console.error(err);
-    if(profile==null)
-     return  res.send(JSON.stringify({ "status": 200, "error": null, "response": "not wrong" }));
+    //if(profile==null)
+    // return  res.send(JSON.stringify({ "status": 200, "error": null, "response": "no contacts" }));
     
      res.send(JSON.stringify({ "status": 200, "error": null, "response": profile }));
 
@@ -123,8 +123,8 @@ function addContact(req,res){
       console.log(profile.toObject().contacts);
       if(!profile.contacts.includes(req.params.fid)){
           profile.contacts.push(req.params.fid);
-      }  
-       profile.save((err,profile)=>{
+         }  
+     profile.save((err,profile)=>{
           if(err) return console.error(err);
             //to add id to fid's contact list
           Profile.findById(req.params.fid,(err,friend)=>{
