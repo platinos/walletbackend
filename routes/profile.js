@@ -36,7 +36,10 @@ router.put('/:id', function (req, res) {
 
 });
 
-
+router.get('/contacts/add/:id/:fid',(req,res)=>{
+   addContact(req,res);
+    
+});
 
 
 
@@ -100,8 +103,6 @@ function updateProfileById(id, data, res) {
 function getContactsById(id, res) {
     res.setHeader('Content-Type', 'application/json');
 
-
-
     Profile.findById().populate('contacts').exec(function (err,profile) {
     if(err)  return console.error(err);
     if(profile==null)
@@ -115,7 +116,43 @@ function getContactsById(id, res) {
 
 }
 
+function addContact(req,res){
+      var id = req.params.id;
+        Profile.findById(id,(err,profile)=>{
+      if(err)  return console.error(err);
+      console.log(profile.toObject().contacts);
+      if(!profile.contacts.includes(req.params.fid)){
+          profile.contacts.push(req.params.fid);
+      }  
+       profile.save((err,profile)=>{
+          if(err) return console.error(err);
+            //to add id to fid's contact list
+          Profile.findById(req.params.fid,(err,friend)=>{
 
+             if(err)  return console.error(err);
+
+             friend.contacts.push(id);
+             friend.save((err,friend)=>{
+               if(err)  return console.error(err);
+
+               res.send({"user":profile,"friend":friend});
+
+             });
+
+          })
+               
+          
+         
+
+       })
+          
+         
+
+     });
+
+
+
+}
 
 
 
