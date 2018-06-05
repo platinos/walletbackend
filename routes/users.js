@@ -1,10 +1,12 @@
 var express = require('express');
 var User = require('../data/User.js')
 var Profile = require('../data/Profile.js')
+var Requests = require('../data/FriendRequests')
 var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
+
   getAllUsers(res);
 });
 
@@ -80,12 +82,16 @@ function postUser(data, res) {
       Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
 
         if(err) res.sendStatus(403);
-        console.log("the user is created with id "+ user._id);
-        console.log(user._id===profile._id);
-        
+          //creating request for user
+        Requests.create({"_id":profile._id},(err,request)=>{
+          if(err)  return console.error(err);
+           
+                });
         res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
 
       });
+     
+     
 
       
      });

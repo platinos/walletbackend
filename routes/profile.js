@@ -1,7 +1,41 @@
 var express = require('express');
 var Profile = require('../data/Profile.js')
 var User = require('../data/user.js')
+
+var Requests = require('../data/FriendRequests')
 var router = express.Router();
+
+//********** do not touch this
+router.post('/addrequest/:id/:fid',(req,res)=>{
+      var id = req.params.id;
+      var fid=req.params.fid;
+
+    Requests.findById(fid,function(err,friend){
+        if(err)  return console.error(err);
+        friend.requests.push({"fid":id,"status":"pending"});
+
+        friend.save((err,friend)=>{
+          if(err) return console.error(err);
+            Requests.findById(id,(err,user)=>{
+                if(err)  return console.error(err);
+            user.sent.push({"fid":fid,"status":"pending"});
+            user.save((e,u)=>{
+
+                if(e) return console.error(e);
+                res.send({"response":[u,friend]});
+            })
+
+        })
+        
+ })
+           })
+
+
+    })    
+   //***************************************  
+
+
+
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -117,7 +151,10 @@ function getContactsById(id, res) {
 }
 
 function addContact(req,res){
-      var id = req.params.id;
+
+   var status = req.body.status;
+   if(status==='Accept'){
+      var id = req.params.id; //here id is the recippient of friend request
         Profile.findById(id,(err,profile)=>{
       if(err)  return console.error(err);
       console.log(profile.toObject().contacts);
@@ -146,15 +183,15 @@ function addContact(req,res){
 
        })
           
-         
+          });
 
-     });
+}
+else{
 
-
-
+   //pata nai
 }
 
 
-
+}
 
 module.exports = router;
