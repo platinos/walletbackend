@@ -36,7 +36,7 @@ router.put('/:id', function (req, res) {
 
 });
 
-router.get('/contacts/add/:id/:fid',(req,res)=>{
+router.post('/contacts/add/:id/:fid',(req,res)=>{
    addContact(req,res);
     
 });
