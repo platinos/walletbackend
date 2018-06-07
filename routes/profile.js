@@ -1,6 +1,7 @@
 var express = require('express');
 var Profile = require('../data/Profile.js')
 var User = require('../data/user.js')
+const mongoose = require('mongoose');
 
 var Requests = require('../data/FriendRequests')
 var router = express.Router();
@@ -12,13 +13,13 @@ router.post('/addrequest/:id/:fid',(req,res)=>{
 
     Requests.findById(fid,function(err,friend){
         if(err)  return console.error(err);
-        friend.requests.push({"fid":id,"status":"pending"});
+        friend.requests.push(id);
 
         friend.save((err,friend)=>{
           if(err) return console.error(err);
             Requests.findById(id,(err,user)=>{
                 if(err)  return console.error(err);
-            user.sent.push({"fid":fid,"status":"pending"});
+            user.sent.push(fid);
             user.save((e,u)=>{
 
                 if(e) return console.error(e);
@@ -31,7 +32,13 @@ router.post('/addrequest/:id/:fid',(req,res)=>{
            })
 
 
-    })    
+    })   
+    
+    
+    router.post('/addContact/:id/:fid',function(req,res){
+
+        addContact(req,res);
+    });
    //***************************************  
 
 
@@ -151,47 +158,104 @@ function getContactsById(id, res) {
 }
 
 function addContact(req,res){
-
+    res.setHeader('Content-Type', 'application/json');
    var status = req.body.status;
    if(status==='Accept'){
       var id = req.params.id; //here id is the recippient of friend request
-        Profile.findById(id,(err,profile)=>{
-      if(err)  return console.error(err);
-      console.log(profile.toObject().contacts);
-      if(!profile.contacts.includes(req.params.fid)){
-          profile.contacts.push(req.params.fid);
-         }  
-     profile.save((err,profile)=>{
-          if(err) return console.error(err);
-            //to add id to fid's contact list
-          Profile.findById(req.params.fid,(err,friend)=>{
+      var fid = req.params.fid;//id of person who sent the friend request
 
-             if(err)  return console.error(err);
+    Profile.find({"_id":{$in:[id,fid]}},(err,profiles)=>{
 
-             friend.contacts.push(id);
-             friend.save((err,friend)=>{
-               if(err)  return console.error(err);
+    if(err) return res.send({"response":err});
+       var user = profiles[0];
+       var friend=profiles[1];
+    if(!user.contacts.includes(fid)){
+        user.contacts.push(fid);
+       } 
 
-               res.send({"user":profile,"friend":friend});
+       if(!friend.contacts.includes(id)){
+        friend.contacts.push(id);
+       } 
 
-             });
+       user.save((e,u)=>{
+  if(e) throw e;
+      friend.save((e,f)=>{
 
-          })
-               
-          
-         
+         if(e)  throw e;
+        
+         res.send({"response":[u,f]});
+         removeRequest(id,fid);
+      })
 
        })
-          
-          });
+    
+    
+        
 
-}
+
+    });
+
+        
+
+   }
 else{
 
    //pata nai
 }
 
 
+}
+
+
+function removeRequest(userId,friendId){
+  //userId => id of user who accepted or rejected the request 
+  //friendId => who requested to be friend
+ //freind id will be in request array of userId
+ //userId will be in set array of friendID
+  Requests.find({"_id":{$in:[userId,friendId]}},(err,docs)=>{
+   console.log(docs);
+    if(err)  return console.error(err);
+         
+if(docs[0]._id.equals(userId)){
+     docs[0].requests.pull(friendId);
+     docs[1].sent.pull(userId);
+       }
+     else {
+        docs[1].requests.pull(friendId);
+        docs[0].sent.pull(userId);
+
+      }
+      
+      console.log(docs[0].requests);
+        docs[0].save((e,u)=>{
+
+            if(e) throw e;
+            docs[1].save((e,f)=>{
+
+                if(e) throw e;
+                console.log([u,f]);
+            })
+        })
+   
+
+  })
+
+
+}
+
+function  removeFromArray(docs,userId,fId){
+    var index = docs[0].requests.indexOf(new mongoose.Types.ObjectId(userId));
+    if (index > -1) {
+        
+      docs[0].splice(index, 1);
+    }
+
+    var index = docs[1].sent.indexOf(new mongoose.Types.ObjectId(fId));
+    if (index > -1) {
+      docs[1].splice(index, 1);
+    }
+    
+  return docs;
 }
 
 module.exports = router;
