@@ -167,15 +167,20 @@ function addContact(req,res){
     Profile.find({"_id":{$in:[id,fid]}},(err,profiles)=>{
 
     if(err) return res.send({"response":err});
-       var user = profiles[0];
-       var friend=profiles[1];
-    if(!user.contacts.includes(fid)){
-        user.contacts.push(fid);
-       } 
+      // var user = profiles[0];
+      // var friend=profiles[1];
+    var user,friend;
+      if(profile[0]._id.equals(id)){
+          user = profile[0];
+          friend=profile[1];
 
-       if(!friend.contacts.includes(id)){
-        friend.contacts.push(id);
-       } 
+      }
+      if(profile[0]._id.equals(fid)){
+          user = friend[1];
+          friend=prodile[0];
+      }
+      
+    //here should be some logic to check if user exist in contact lsit or not but it looks like redundendt here.
 
        user.save((e,u)=>{
   if(e) throw e;
@@ -243,19 +248,5 @@ if(docs[0]._id.equals(userId)){
 
 }
 
-function  removeFromArray(docs,userId,fId){
-    var index = docs[0].requests.indexOf(new mongoose.Types.ObjectId(userId));
-    if (index > -1) {
-        
-      docs[0].splice(index, 1);
-    }
-
-    var index = docs[1].sent.indexOf(new mongoose.Types.ObjectId(fId));
-    if (index > -1) {
-      docs[1].splice(index, 1);
-    }
-    
-  return docs;
-}
 
 module.exports = router;
