@@ -67,7 +67,6 @@ router.delete('/:id', function (req, res) {
   //Delete user Profile
 });
 
-
 /* User Router Functions */
 
 function postUser(data, res) {
@@ -76,9 +75,7 @@ function postUser(data, res) {
   if(err){
          console.log(err);
         res.send(JSON.stringify({ "status": 200, "response": err }));
-       }
-
-      
+       }     
       Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
 
         if(err) res.sendStatus(403);
@@ -90,10 +87,7 @@ function postUser(data, res) {
         res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
 
       });
-     
-     
-
-      
+          
      });
 }
 
