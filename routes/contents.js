@@ -66,7 +66,7 @@ function getAllContent(res) {
     res.setHeader('Content-Type', 'application/json');
     Content.find(function (err, contents) {
         if (err) throw err;
-        if (!user) return res.send(401);
+        if (!contents) return res.send(401);
         res.send(JSON.stringify({ "status": 200, "error": null, "response": contents }));
     });
 
