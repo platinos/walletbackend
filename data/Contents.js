@@ -15,3 +15,7 @@ var contentSchema = new schmea({
         //ref array for likes
        //ref array for shares..
  },{ timestamps: { createdAt: 'created_at',updatedAt:'updated_at' } });
+
+
+ var Content = mongoose.model("Content",contentSchema);
+  module.exports=Content;

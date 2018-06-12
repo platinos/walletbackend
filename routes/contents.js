@@ -1,5 +1,6 @@
 var express = require('express');
-var User = require('../data/Contents.js')
+var User = require('../data/Contents.js');
+var Content = require('../data/Contents.js');
 var router = express.Router();
 
 /* GET users listing. */
@@ -35,27 +36,38 @@ router.delete('/:id', function (req, res) {
     //Delete user Profile
 });
 
+router.post('/post/:id',function(req,res){
+  postContent(req,res);
+
+});
+
 
 /* User Router Functions */
 
-function postContent(data, res) {
+function postContent(req, res) {
+   var body = req.body.content;
+   var id = req.params.id;
+    //create content and assign id to content and save 
+    var data = {"content":body,"user":id}
 
-    User.create(data, function (err, user) {
-        if (err) {
-            console.log(err);
-            res.send(JSON.stringify({ "status": 200, "response": err }));
-        }
-        console.log("the user is created with id " + user._id);
-        res.send(JSON.stringify({ "status": 201, "response": user }));
+    Content.create(data,function(err,content){
+  if(err)  throw err;
+
+    res.send({"response":content});
+
+
     });
+
+
+   
 }
 
 function getAllContent(res) {
     res.setHeader('Content-Type', 'application/json');
-    User.find(function (err, user) {
+    Content.find(function (err, contents) {
         if (err) throw err;
         if (!user) return res.send(401);
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+        res.send(JSON.stringify({ "status": 200, "error": null, "response": contents }));
     });
 
 
