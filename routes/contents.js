@@ -5,20 +5,20 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    getAllContent(res);
+    getAllContent(res);             //done
 });
 
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
-    getContentById(id, res);
+    getContentById(id, res);        //not done
 });
 
 router.get('/user/:id', function (req, res, next) {
     var id = req.params.id;
-    getContentByUserId(id, res);
+    getContentByUserId(id, res);     //not done 
 });
 
-router.put('/:id', function (req, res) {
+router.put('/:id', function (req, res) { //not done 
     var id = req.params.id;
     var name = req.body.name;
     var email = req.body.email;
@@ -41,6 +41,26 @@ router.post('/post/:id',function(req,res){
 
 });
 
+router.put('/:contentId/:likerId',function(req,res){
+
+     addLike(req,res);
+
+});
+
+function addLike(req,res){
+    var contentId = req.params.contentId;
+    var likerId = req.params.likerId;
+Content.findById(contentId,(err,content)=>{
+       content.likes.push({liker:likerId,time:Date.now()});
+    content.save((e,c)=>{
+    if(e)   throw e;
+     res.send({"response":content});
+    
+    });
+   
+  });
+
+}
 
 /* User Router Functions */
 
@@ -65,19 +85,35 @@ function postContent(req, res) {
 
 function getAllContent(res) {
     res.setHeader('Content-Type', 'application/json');
-    Content.find(function (err, contents) {
+  /*  Content.find(function (err, contents) {
         if (err) throw err;
         if (!contents) return res.send(401);
         res.send(JSON.stringify({ "status": 200, "error": null, "response": contents }));
+    });  */
+
+ Content.find().populate('likes.liker').populate('shares.sharedBy').exec((e,content)=>{
+
+        if(e)  return console.error(e);
+     
+        res.send({"response":content});
+
     });
-
-
 }
 
-function getContentById(uname) {
-    //uname can be anything
-    //for now only consider email and name
-    //can use regular expression
+function getContentById(id,res) {
+    res.setHeader('Content-Type', 'application/json');
+    
+  Content.findById(id).populate('likes.liker').populate('shares.sharedBy').exec((e,content)=>{
+
+   if(e)  return console.error(e);
+
+   res.send({"response":content});
+   
+
+
+    }) 
+
+
 }
 
 function getContentByUserId(uname) {
@@ -85,7 +121,7 @@ function getContentByUserId(uname) {
 }
 
 function getContentByTag(uname) {
-
+  
 }
 
 

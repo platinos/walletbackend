@@ -5,6 +5,7 @@ var User = require('../data/user.js');
 const schmea = mongoose.Schema;
 
 var contentSchema = new schmea({
+      image:String,
       content:String,
       tag:String,
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
