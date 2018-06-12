@@ -50,13 +50,14 @@ function postContent(req, res) {
     //create content and assign id to content and save 
     var data = {"content":body,"user":id}
 
-    Content.create(data,function(err,content){
+   Content.create(data,function(err,content){
   if(err)  throw err;
 
     res.send({"response":content});
 
 
-    });
+    });  
+   
 
 
    
