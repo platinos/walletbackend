@@ -47,6 +47,11 @@ router.put('/:contentId/:likerId',function(req,res){
 
 });
 
+router.post('/share/:content/:user',(req,res)=>{
+
+   doShare(req,res);
+});
+
 function addLike(req,res){
     var contentId = req.params.contentId;
     var likerId = req.params.likerId;
@@ -59,6 +64,39 @@ Content.findById(contentId,(err,content)=>{
     });
    
   });
+
+}
+
+function doShare(req,res){
+  //add to shared list of content
+  //create new content in content 
+    var uId= req.params.user;
+    var cId = req.params.content;
+    var addedContent = req.body.content;
+   Content.findById(cId,(err,content)=>{
+       if(err)  return console.log(err);
+        var newContent = new Content();
+        if(addedContent){
+          newContent.content=addedContent;
+        }
+         newContent.user=uId;
+         newContent.isShared=true;
+         newContent.parent=cId;
+         newContent.save((err,newContent)=>{
+         if(err)  throw err;
+         console.log(newContent._id);
+         content.shares.push({sharedBy:uId});
+           content.save((e,c)=>{
+               if(e)  throw e;
+               res.send({"response":newContent});  
+           });
+           
+
+         })
+   
+
+    })
+
 
 }
 
@@ -91,7 +129,11 @@ function getAllContent(res) {
         res.send(JSON.stringify({ "status": 200, "error": null, "response": contents }));
     });  */
 
- Content.find().populate('likes.liker').populate('shares.sharedBy').exec((e,content)=>{
+ Content.find().populate('likes.liker')
+ .populate('shares.sharedBy')
+ .populate('parent')
+ .populate('user')
+ .exec((e,content)=>{
 
         if(e)  return console.error(e);
      
@@ -103,7 +145,8 @@ function getAllContent(res) {
 function getContentById(id,res) {
     res.setHeader('Content-Type', 'application/json');
     
-  Content.findById(id).populate('likes.liker').populate('shares.sharedBy').exec((e,content)=>{
+Content.findById(id).populate('likes.liker').populate('shares.sharedBy')
+.populate('user').populate('parent').exec((e,content)=>{
 
    if(e)  return console.error(e);
 
