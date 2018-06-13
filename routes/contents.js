@@ -19,12 +19,8 @@ router.get('/user/:id', function (req, res, next) {
 });
 
 router.put('/:id', function (req, res) { //not done 
-    var id = req.params.id;
-    var name = req.body.name;
-    var email = req.body.email;
-    var active = req.body.active;
-    var data = { "_id": id, "name": name, "email": email, "active": active }
-    updateUserById(id, data, res);
+  
+    updateContentById(req, res);
 
 });
 
@@ -170,18 +166,25 @@ function getContentByTag(uname) {
 
 
 
-function updateContentById(id, data, res) {
+function updateContentById( req, res) {
     res.setHeader('Content-Type', 'application/json');
-    User.findByIdAndUpdate(id, data, function (err, user) {
-        if (err) return res.sendStatus(404);
-        if (!user) return res.send(401);
+    var id = req.params.id;
+     Content.findById(id,(err,content)=>{
+          if(err)  throw err;
+       var c = req.body.content;
+     if(c){
+        content.content=c;
+       
+      }
 
-        res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
+      content.save((err,response)=>{
+       if(err)   throw err;
+
+          res.send({"response":response});
+
+      });
 
     });
-
-
-
 }
 
 function deleteContentById(id) {
