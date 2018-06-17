@@ -1,6 +1,7 @@
 var express = require('express');
 var User = require('../data/Contents.js');
 var Content = require('../data/Contents.js');
+const Profile = require('../data/Profile.js');
 var router = express.Router();
 
 /* GET users listing. */
@@ -10,12 +11,12 @@ router.get('/', function (req, res, next) {
 
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
-    getContentById(id, res);        //not done
+    getContentById(id, res);   //by content Id     //not done
 });
 
-router.get('/user/:id', function (req, res, next) {
+router.post('/user/:id', function (req, res, next) {
     var id = req.params.id;
-    getContentByUserId(id, res);     //not done 
+    getContentByUserId(req, res);     //not done 
 });
 
 router.put('/:id', function (req, res) { //not done 
@@ -26,6 +27,7 @@ router.put('/:id', function (req, res) { //not done
 
 
 router.delete('/:id', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
     deleteUserById(id)
     res.end("Record Deleted");
@@ -48,7 +50,18 @@ router.post('/share/:content/:user',(req,res)=>{
    doShare(req,res);
 });
 
+router.get('/likes/:contentId',(req,res)=>{
+
+    getLikesOnContent(req,res);
+
+});
+
+router.get('/shares/:contentId',(req,res)=>{
+    getSharesOnContent(req,res);
+})
+
 function addLike(req,res){
+    res.setHeader('Content-Type', 'application/json');
     var contentId = req.params.contentId;
     var likerId = req.params.likerId;
 Content.findById(contentId,(err,content)=>{
@@ -66,6 +79,7 @@ Content.findById(contentId,(err,content)=>{
 function doShare(req,res){
   //add to shared list of content
   //create new content in content 
+  res.setHeader('Content-Type', 'application/json');
     var uId= req.params.user;
     var cId = req.params.content;
     var addedContent = req.body.content;
@@ -99,18 +113,25 @@ function doShare(req,res){
 /* User Router Functions */
 
 function postContent(req, res) {
-   var body = req.body.content;
-   var id = req.params.id;
-    //create content and assign id to content and save 
-    var data = {"content":body,"user":id}
+    res.setHeader('Content-Type', 'application/json');
+    var body = req.body.content;
+    var id = req.params.id;
+       //create content and assign id to content and save 
+       var data = {"content":body,"user":id}
+  Profile.findById(id,(err,profile)=>{
+      if(err)  return res.send({"error":err});
+    Content.create(data,function(err,content){
+        if(err)  throw err;
+     profile.contents.push(content._id);
+     profile.save((e,p)=>{
+         if(e)  return res.send({"error":e});
 
-   Content.create(data,function(err,content){
-  if(err)  throw err;
-
-    res.send({"response":content});
-
-
-    });  
+         res.send({"response":content});
+      });
+    
+      });  
+ });
+   
    
 
 
@@ -156,12 +177,36 @@ Content.findById(id).populate('likes.liker').populate('shares.sharedBy')
 
 }
 
-function getContentByUserId(uname) {
+function getContentByUserId(req,res) {
+    //will be called  when profile is loaded.
+   
+    res.setHeader('Content-Type', 'application/json');
+       var userId = req.params.id;
+       var page = req.body.page;
+       const pageSize=10;
+Profile.findById(userId)
+.populate({
+           //field content =>{all}
+          // no of lieks =>{get the sizes of liek array}
+         //no of shares  => {get the size of share array}
+      //comments => {sorted by updated  date} 
+    path:'contents',
+    options:{skip:pageSize*page,limit:pageSize,sort:'-createdAt'},
+    populate:{path:'comments',sort:'-createdAt',limit:pageSize}
 
+})
+.exec((err,contents)=>{
+  if(err)  return res.send({"error":err});
+  res.send({"response":contents});
+ 
+    });
+     
 }
 
 function getContentByTag(uname) {
   
+
+
 }
 
 
@@ -188,15 +233,55 @@ function updateContentById( req, res) {
     });
 }
 
+
+function getLikesOnContent(req,res){
+   Content.findById(req.params.contentId).select('_id likes')
+   .populate({path:'likes.liker',select:'name _id'})
+   .exec((err,response)=>{
+    if(err)  return res.send({"error":err}); 
+    var   likesArr = [];
+   likesArr= response.likes.map((item)=>{
+       var doc = {
+                  "user_id":item.liker._id,
+                  "name":item.liker.name,
+                  "time":item.time
+
+              };
+        return doc;
+
+      });
+      res.send({"response":likesArr});
+
+   });
+   
+}
+
+function getSharesOnContent(req,res){
+    Content.findById(req.params.contentId).select('_id shares')
+   .populate({path:'shares.sharedBy',select:'name _id'})
+   .exec((err,response)=>{
+    if(err)  return res.send({"error":err}); 
+    var   sharesArr = [];
+   sharesArr= response.shares.map((item)=>{
+       var doc = {
+                  "user_id":item.sharedBy._id,
+                  "name":item.sharedBy.name,
+                  "time":item.time
+
+              };
+        return doc;
+
+      });
+      res.send({"response":sharesArr});
+
+   });
+    
+ }
+
 function deleteContentById(id) {
 
 
 
 }
-
-
-
-
-
 
 module.exports = router;

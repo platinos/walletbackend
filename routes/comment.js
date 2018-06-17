@@ -10,16 +10,19 @@ router.post('/addComment/:contentId/:id',(req,res)=>{
    //is is user id who posts a comment
      addCommentToContent(req,res);
 
-
-
-});
+ });
 
 router.put("/editComment/:commentId",(req,res)=>{
   
            editComment(req,res);
 
+});
 
-  });
+router.post("/addLike/:cId:/:uId",(req,res)=>{
+                
+     addLikeToComment(req,res);
+    
+  })
 router.get('/',(req,res)=>{
     Comment.find((err,comment)=>{
          if(err)  throw err;
@@ -27,6 +30,20 @@ router.get('/',(req,res)=>{
             });
 
       });
+
+
+  function addLikeToComment(req,res){
+          Comment.findById(req.params.cId,(err,comment)=>{
+             comment.likes.push({"liker":req.params.uId});
+             comment.save((e,c)=>{
+              if(e)  throw e;
+               res.send({"response":"Ok"});
+             });
+      });
+      
+  
+
+  }
 
   function addCommentToContent(req,res){
 

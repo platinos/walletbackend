@@ -7,7 +7,6 @@ const schema = mongoose.Schema;
 var contentSchema = new schema({
       image:String,
       content:String,
-      tag:String,
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       comments:[{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
       likes:[{liker:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},time:{type:Date,default:Date.now()}}],
@@ -17,8 +16,8 @@ var contentSchema = new schema({
        
         //ref array for likes
        //ref array for shares..
- },{ timestamps: { createdAt: 'created_at',updatedAt:'updated_at' } });
+      },{ timestamps: { createdAt: 'created_at',updatedAt:'updated_at' } });
 
 
- var Content = mongoose.model("Content",contentSchema);
+  var Content = mongoose.model("Content",contentSchema);
   module.exports=Content;

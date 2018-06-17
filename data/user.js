@@ -12,7 +12,8 @@ var userSchema = new Schema({
         displayPic:String,
         created:Date,
         lastLogin:Date,
-        active:{type:Boolean,default:false}
+        active:{type:Boolean,default:false},
+        ImageUrl:String
        
         
     });
