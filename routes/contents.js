@@ -129,6 +129,7 @@ function getAllContent(res) {
  .populate('shares.sharedBy')
  .populate('parent')
  .populate('user')
+ .populate('comments')
  .exec((e,content)=>{
 
         if(e)  return console.error(e);
@@ -142,7 +143,7 @@ function getContentById(id,res) {
     res.setHeader('Content-Type', 'application/json');
     
 Content.findById(id).populate('likes.liker').populate('shares.sharedBy')
-.populate('user').populate('parent').exec((e,content)=>{
+.populate('user').populate('parent').populate('comments').exec((e,content)=>{
 
    if(e)  return console.error(e);
 

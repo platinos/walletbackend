@@ -1,27 +1,69 @@
 var express = require('express');
 var User = require('../data/Contents.js');
 var Content = require('../data/Contents.js');
+var Comment = require('../data/Comment.js');
 var router = express.Router();
 
 
 
-router.post('/addComment/:id',(req,res)=>{
-
+router.post('/addComment/:contentId/:id',(req,res)=>{
+   //is is user id who posts a comment
      addCommentToContent(req,res);
 
 
 
 });
 
+router.put("/editComment/:commentId",(req,res)=>{
+  
+           editComment(req,res);
+
+
+  });
+router.get('/',(req,res)=>{
+    Comment.find((err,comment)=>{
+         if(err)  throw err;
+         res.send({"response":comment});
+            });
+
+      });
 
   function addCommentToContent(req,res){
 
-     
+     var cId = req.params.contentId;
+      data = {"comment":req.body.comment,"user":req.params.id,"content":cId}
+   
+       Comment.create(data,(err,commentdoc)=>{
+        if(err)  throw err;
+              
+           Content.findById(cId,(e,content)=>{
+                if(e) throw e;
+                content.comments.push(commentdoc._id);
+                content.save();
+                res.send({"response":commentdoc});
+           });
+
+
+        });
+
+      
+
 
   }
 
 
+function editComment(req,res){
+   var id = req.params.commentId;
+   Comment.findByIdAndUpdate(id,{"comment":req.body.comment},
+   (err,comment)=>{
+   if(err)  throw err;
 
+    res.send({"result":"updated","error":"No","response":comment});
+
+   });
+
+
+}
 
 
 
