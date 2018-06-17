@@ -60,18 +60,41 @@ router.get('/shares/:contentId',(req,res)=>{
     getSharesOnContent(req,res);
 })
 
-function addLike(req,res){
+function addLike(req,res){ //or remove like 
     res.setHeader('Content-Type', 'application/json');
     var contentId = req.params.contentId;
     var likerId = req.params.likerId;
 Content.findById(contentId,(err,content)=>{
-       content.likes.push({liker:likerId,time:Date.now()});
+       if(err)  return res.send({"error":err});
+   var isExists= content.likes.map((item)=>{
+       return item.liker;
+
+    }).some((item)=>{ return item.equals(likerId)});
+    console.log(isExists);
+     if(!isExists){ //if starts
+     content.likes.push({liker:likerId});
     content.save((e,c)=>{
     if(e)   throw e;
-     res.send({"response":content});
+      return res.send({"response":content});
     
     });
-   
+       }   //if ends
+     else{
+         var likeItem;
+        content.likes.map((item)=>{
+
+            if(item.liker.equals(likerId)){
+              likeItem= item;
+            }
+        });
+        content.likes.pull(likeItem);
+        content.save((err,content)=>{
+            if(err)  return console.error(err);
+            res.send({"response":content});
+        });
+        
+
+     }
   });
 
 }
@@ -186,10 +209,6 @@ function getContentByUserId(req,res) {
        const pageSize=10;
 Profile.findById(userId)
 .populate({
-           //field content =>{all}
-          // no of lieks =>{get the sizes of liek array}
-         //no of shares  => {get the size of share array}
-      //comments => {sorted by updated  date} 
     path:'contents',
     options:{skip:pageSize*page,limit:pageSize,sort:'-createdAt'},
     populate:{path:'comments',sort:'-createdAt',limit:pageSize}
@@ -241,10 +260,10 @@ function getLikesOnContent(req,res){
     if(err)  return res.send({"error":err}); 
     var   likesArr = [];
    likesArr= response.likes.map((item)=>{
-       var doc = {
+       var doc = { "timeStamp": item._id.getTimestamp(),
                   "user_id":item.liker._id,
                   "name":item.liker.name,
-                  "time":item.time
+                  //"time":item.time
 
               };
         return doc;
@@ -263,10 +282,10 @@ function getSharesOnContent(req,res){
     if(err)  return res.send({"error":err}); 
     var   sharesArr = [];
    sharesArr= response.shares.map((item)=>{
-       var doc = {
+       var doc = { "timeStamp": item._id.getTimestamp(),
                   "user_id":item.sharedBy._id,
                   "name":item.sharedBy.name,
-                  "time":item.time
+                  //"time":item.time
 
               };
         return doc;

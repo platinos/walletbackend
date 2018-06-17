@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 var Comment = require('../data/Comment.js');
 var User = require('../data/user.js');
 const schema = mongoose.Schema;
-
+delete mongoose.connection.models['Content'];
 var contentSchema = new schema({
       image:String,
       content:String,
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       comments:[{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
-      likes:[{liker:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},time:{type:Date,default:Date.now()}}],
-      shares:[{sharedBy:{type: mongoose.Schema.Types.ObjectId, ref: 'User'},time:{type:Date,default:Date.now()}}],
+      likes:[{liker:{type: mongoose.Schema.Types.ObjectId, ref: 'User'}}],
+      shares:[{sharedBy:{type: mongoose.Schema.Types.ObjectId, ref: 'User'}}],
       isShared:{type:schema.Types.Boolean,default:false},
       parent:{type: mongoose.Schema.Types.ObjectId, ref:'Content',autopopulate: true}
        
