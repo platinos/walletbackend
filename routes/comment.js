@@ -23,6 +23,8 @@ router.post("/addLike/:cId:/:uId",(req,res)=>{
      addLikeToComment(req,res);
     
   })
+
+ 
 router.get('/',(req,res)=>{
     Comment.find((err,comment)=>{
          if(err)  throw err;

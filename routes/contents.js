@@ -5,8 +5,8 @@ const Profile = require('../data/Profile.js');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-    getAllContent(res);             //done
+router.post('/', function (req, res, next) {
+    getAllContent(req,res);             //done
 });
 
 router.get('/:id', function (req, res, next) {
@@ -59,6 +59,11 @@ router.get('/likes/:contentId',(req,res)=>{
 router.get('/shares/:contentId',(req,res)=>{
     getSharesOnContent(req,res);
 })
+
+router.post("/:contentId/comments",(req,res)=>{
+    getCommentsByContentId(req,res);
+
+ })
 
 function addLike(req,res){ //or remove like 
     res.setHeader('Content-Type', 'application/json');
@@ -160,8 +165,8 @@ function postContent(req, res) {
 
    
 }
-
-function getAllContent(res) {
+//get all content version1 
+/*function getAllContent(res) {
     res.setHeader('Content-Type', 'application/json');
   /*  Content.find(function (err, contents) {
         if (err) throw err;
@@ -169,7 +174,7 @@ function getAllContent(res) {
         res.send(JSON.stringify({ "status": 200, "error": null, "response": contents }));
     });  */
 
- Content.find().populate('likes.liker')
+/* Content.find().sort('--createdAt').populate('likes.liker')
  .populate('shares.sharedBy')
  .populate('parent')
  .populate('user')
@@ -181,8 +186,56 @@ function getAllContent(res) {
         res.send({"response":content});
 
     });
-}
+}  */
 
+function getAllContent(req,res){
+    console.log('inside method');
+    res.setHeader('Content-Type', 'application/json');
+    var page = req.body.page;
+    const pageSize = 10;
+    Content.find()
+    .sort('-updated_at')
+    .skip(pageSize*page)
+    .limit(pageSize)
+    .populate({path:'user',select:'name  ImageUrl _id'})
+   .populate({path:'comments',sort:'-updated_at',limit:2,select:'comment likes user updated_at'
+    ,populate:{path:'user',select:'name ImageUrl _id'}})
+    .exec((err,contents)=>{
+          if(err) return res.send({"error":err});
+   
+          
+       var contentResponse = contents.map((item)=>{
+              var doc = {
+                      "content":item.content,
+                       "Id":item._id,
+                       "PostByUser":{"Id":item.user._id,"image":item.user.ImageUrl,"name":item.user.name},
+                       "likesCount":item.likes.length,
+                       "sharesCount":item.shares.length,
+                       "createdAt":item.created_at,
+                       "updateAt":item.updated_at,
+                       "isShared":item.isShared,
+                       "parentContentId":item.parent,
+                        "commentsCount":item.comments.length,
+                        "comments":item.comments.map((item)=>{
+                              return {
+                                    "Id":item._id, "byUser":item.user,"likesCount":item.likes.length,
+                                     "updatedAt": item.updated_at
+                              }
+                        })
+           
+
+              }
+              return doc;
+                 
+
+       }); 
+       res.send({"response":contentResponse});
+
+
+    });
+
+
+}
 function getContentById(id,res) {
     res.setHeader('Content-Type', 'application/json');
     
@@ -207,11 +260,12 @@ function getContentByUserId(req,res) {
        var userId = req.params.id;
        var page = req.body.page;
        const pageSize=10;
+       
 Profile.findById(userId)
 .populate({
     path:'contents',
     options:{skip:pageSize*page,limit:pageSize,sort:'-createdAt'},
-    populate:{path:'comments',sort:'-createdAt',limit:pageSize}
+    populate:{path:'comments',sort:'-created_at',limit:pageSize}
 
 })
 .exec((err,contents)=>{
