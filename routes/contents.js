@@ -198,8 +198,8 @@ function getAllContent(req,res){
     .skip(pageSize*page)
     .limit(pageSize)
     .populate({path:'user',select:'name  ImageUrl _id'})
-   .populate({path:'comments',sort:'-updated_at',limit:2,select:'comment likes user updated_at'
-    ,populate:{path:'user',select:'name ImageUrl _id'}})
+   .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
+    )
     .exec((err,contents)=>{
           if(err) return res.send({"error":err});
    
@@ -354,6 +354,27 @@ function getSharesOnContent(req,res){
 function deleteContentById(id) {
 
 
+
+}
+
+
+
+function getCommentsByContentId(req,res){
+    res.setHeader('Content-Type', 'application/json');
+         var page = req.body.page;
+         const  pageSize=10;
+         var  skip = page*pageSize;
+   Content.find({_id:req.params.contentId}).select('_id')
+   .populate('comments','_id comment updated_at',null
+   ,{sort: { 'updated_at': -1 },limit:10,skip:skip,populate:{path:'user',select:'name ImageUrl _id'}}
+   ,{populate:{path:'user',select:'name ImageUrl _id'}})
+   .exec((err,comments)=>{
+             if(err)  return res.send({"error":err})
+
+             res.send(  {"status":200,"response":comments});
+       
+
+    });
 
 }
 
