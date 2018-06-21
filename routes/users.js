@@ -32,7 +32,7 @@ router.post('/signup', function (req, res) {
   var name = req.body.name;
   var email = req.body.email;
   var active = req.body.active;
-  var data = {"name":name,"email":email,"active":active}
+  var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone}
   var result = postUser(data, res);
   //Add user Profile
    console.log(result);

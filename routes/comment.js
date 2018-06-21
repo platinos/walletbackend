@@ -58,8 +58,11 @@ router.get('/',(req,res)=>{
            Content.findById(cId,(e,content)=>{
                 if(e) throw e;
                 content.comments.push(commentdoc._id);
-                content.save();
-                res.send({"response":commentdoc});
+                content.save((err,content)=>{
+                  if(err) throw err;
+                  res.send({"response":commentdoc});
+                });
+                
            });
 
 

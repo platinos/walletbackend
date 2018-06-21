@@ -260,16 +260,14 @@ function getContentByUserId(req,res) {
        var userId = req.params.id;
        var page = req.body.page;
        const pageSize=10;
-       
-Profile.findById(userId)
-.populate({
-    path:'contents',
-    options:{skip:pageSize*page,limit:pageSize,sort:'-createdAt'},
-    populate:{path:'comments',sort:'-created_at',limit:pageSize}
-
-})
+       var skip = page*pageSize;
+Profile.find({_id:userId}).select('contents')
+.populate('contents','_id content updated_at',null
+,{sort: { 'updated_at': -1 },limit:10,skip:skip,populate:{path:'user',select:'name ImageUrl _id'},
+populate:{path:'comments',options:{limit:2}}}
+)
 .exec((err,contents)=>{
-  if(err)  return res.send({"error":err});
+  if(err) {   console.log(err); return res.send({"error":err});}
   res.send({"response":contents});
  
     });
@@ -317,6 +315,7 @@ function getLikesOnContent(req,res){
        var doc = { "timeStamp": item._id.getTimestamp(),
                   "user_id":item.liker._id,
                   "name":item.liker.name,
+                  "ImageUrl":item.liker.ImageUrl
                   //"time":item.time
 
               };
@@ -362,8 +361,10 @@ function deleteContentById(id) {
 function getCommentsByContentId(req,res){
     res.setHeader('Content-Type', 'application/json');
          var page = req.body.page;
+         
          const  pageSize=10;
          var  skip = page*pageSize;
+         if(page==0) {skip=2;}
    Content.find({_id:req.params.contentId}).select('_id')
    .populate('comments','_id comment updated_at',null
    ,{sort: { 'updated_at': -1 },limit:10,skip:skip,populate:{path:'user',select:'name ImageUrl _id'}}
