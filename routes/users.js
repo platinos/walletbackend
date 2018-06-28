@@ -19,10 +19,10 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/login', function (req, res) {
-  var pass = req.body.password;
+  var password = req.body.password;
   var uname = req.body.uname;
-    
-  getUserByUname(uname);//uname can be email ,id or number 
+  console.log(password);
+  getUserByUname(uname,password,res);//uname can be email ,id or number 
 
   
 });
@@ -32,7 +32,8 @@ router.post('/signup', function (req, res) {
   var name = req.body.name;
   var email = req.body.email;
   var active = req.body.active;
-  var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone}
+  var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone,
+  "password":req.body.password}
   var result = postUser(data, res);
   //Add user Profile
    console.log(result);
@@ -70,25 +71,35 @@ router.delete('/:id', function (req, res) {
 /* User Router Functions */
 
 function postUser(data, res) {
-
-  User.create(data,function(err,user){
-  if(err){
-         console.log(err);
-        res.send(JSON.stringify({ "status": 200, "response": err }));
-       }     
+   
+  User.find({email:data.email},function (err,user){
+       if(err)  return console.error(err);
+       if(user.length){
+        return res.send({"response":"user already exists"});
+           }
+       
+    User.create(data,function(err,user){
+     if(err){
+            console.log(err);
+       res.send(JSON.stringify({ "status": 200, "response": err }));
+         }     
       Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
-
-        if(err) res.sendStatus(403);
-          //creating request for user
-        Requests.create({"_id":profile._id},(err,request)=>{
-          if(err)  return console.error(err);
-           
-                });
-        res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
-
-      });
           
-     });
+                  if(err) res.sendStatus(403);
+                    //creating request for user
+                  Requests.create({"_id":profile._id},(err,request)=>{
+                    if(err)  return console.error(err);
+                     
+                          });
+                  res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
+          
+          });
+                    
+       });
+
+
+  })
+
 }
 
 function getAllUsers(res) {
@@ -105,11 +116,30 @@ function getAllUsers(res) {
 
 }
 
-function getUserByUname(uname) {
-  //uname can be anything
-  //for now only consider email and name
-  //can use regular expression
+function getUserByUname(uname,password,res) {
+   
+  User.findOne({phone:uname},(err,user)=>{
+      if(err)  return res.send({"error":err})
 
+      if(user){
+        console.log(user.password);
+            if(user.password===password)
+           return res.send({"response":user});
+           return res.send({"response":"wrong password or username"});
+          }
+
+    User.find({email:uname},(err,user)=>{
+         if(err)  return err;
+         if(user){
+          if(user.password===password)
+         return res.send({"response":user});
+         return res.send({"response":"wrong password or username"});
+        }
+         
+
+      })
+      res.send({"response":"user not found"});
+  })
 
 
 

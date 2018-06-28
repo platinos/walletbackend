@@ -88,6 +88,32 @@ function editComment(req,res){
 }
 
 
+// getLikesOnComment
+function getLikes(req,res){
+  // var commentId = req.params.id;
+   Conmment.findById(req.params.commentId).select('_id likes')
+   .populate({path:'likes.liker',select:'name _id'})
+   .exec((err,response)=>{
+    if(err)  return res.send({"error":err}); 
+    var   likesArr = [];
+   likesArr= response.likes.map((item)=>{
+       var doc = { "timeStamp": item._id.getTimestamp(),
+                  "user_id":item.liker._id,
+                  "name":item.liker.name,
+                  "ImageUrl":item.liker.ImageUrl
+                  //"time":item.time
+
+              };
+        return doc;
+
+      });
+
+      res.send({"response":likesArr});
+
+   });
+
+
+   }
 
 
 module.exports = router;
