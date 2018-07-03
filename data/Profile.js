@@ -14,7 +14,7 @@ var ProfileSchema = new Schema({
        contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
        contents:[{type:mongoose.Schema.Types.ObjectId,ref:'Content'}],
-       saves:[{saved:{type:mongoose.Schema.Types.ObjectId,ref:'Content'}}]//ref for posts made by user.
+       saves:[{saved:{type:mongoose.Schema.Types.ObjectId,ref:'Content'}}]//ref for posts saved by user.
 
 });
 

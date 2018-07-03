@@ -69,6 +69,8 @@ function addLike(req,res){ //or remove like
     res.setHeader('Content-Type', 'application/json');
     var contentId = req.params.contentId;
     var likerId = req.params.likerId;
+    //need to push contentId into saves array of profile object 
+
 Content.findById(contentId,(err,content)=>{
        if(err)  return res.send({"error":err});
    var isExists= content.likes.map((item)=>{
@@ -80,7 +82,18 @@ Content.findById(contentId,(err,content)=>{
      content.likes.push({liker:likerId});
     content.save((e,c)=>{
     if(e)   throw e;
-      return res.send({"response":content});
+         //just for now getting profie to add to save value
+         Profie.findById(likerId,(err,profile)=>{
+           if(err)  return console.log(err);
+           profile.saves.push(contentId);
+           profile.save((err,profiles)=>{
+
+            if(err)  return console.error(err)
+            return res.send({"response":content});
+           })
+
+         })
+     
     
     });
        }   //if ends
@@ -95,7 +108,18 @@ Content.findById(contentId,(err,content)=>{
         content.likes.pull(likeItem);
         content.save((err,content)=>{
             if(err)  return console.error(err);
-            res.send({"response":content});
+
+            Profie.findById(likerId,(err,profile)=>{
+                if(err)  return console.log(err);
+                profile.saves.pull(contentId);
+                profile.save((err,profiles)=>{
+     
+                 if(err)  return console.error(err)
+                 return res.send({"response":content});
+                })
+     
+              })
+            r
         });
         
 
