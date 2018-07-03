@@ -3,7 +3,7 @@ var User = require('../data/User.js')
 var Profile = require('../data/Profile.js')
 var Requests = require('../data/FriendRequests')
 var router = express.Router();
-
+var bcrypt = require('bcrypt');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
 
@@ -71,31 +71,52 @@ router.delete('/:id', function (req, res) {
 /* User Router Functions */
 
 function postUser(data, res) {
+  var type=' '
+   if(!(data.phone||data.email))
+       return res.send({"error":"empty request"});
+   if(data.email){
+     type={email:data.email}
+   }
+   if(data.phone){
+     type={phone:data.phone}
+
+    }
+    
+
    
-  User.find({email:data.email},function (err,user){
+  User.findOne(type,function (err,user){
        if(err)  return console.error(err);
-       if(user.length){
+       if(user){
         return res.send({"response":"user already exists"});
            }
        
-    User.create(data,function(err,user){
-     if(err){
-            console.log(err);
-       res.send(JSON.stringify({ "status": 200, "response": err }));
-         }     
-      Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
-          
-                  if(err) res.sendStatus(403);
-                    //creating request for user
-                  Requests.create({"_id":profile._id},(err,request)=>{
-                    if(err)  return console.error(err);
-                     
-                          });
-                  res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
-          
-          });
-                    
-       });
+           //hash the password 
+        const  saltRounds = 10;
+        //generate teh random salt
+        bcrypt.hash(data.password, saltRounds, function(err, hash) {
+          if(err)  return res.send({"error":"error in hashing"});
+          // Store hash in your password DB.
+          data.password=hash;
+          User.create(data,function(err,user){
+            if(err){
+                   console.log(err);
+              res.send(JSON.stringify({ "status": 200, "response": err }));
+                }     
+             Profile.create({"_id":user._id,"user":user._id},(err,profile)=>{
+                 
+                         if(err) res.sendStatus(403);
+                           //creating request for user
+                         Requests.create({"_id":profile._id},(err,request)=>{
+                           if(err)  return console.error(err);
+                            
+                                 });
+                         res.send(JSON.stringify({ "status": 201, "response": [user,profile] }));
+                 
+                 });
+                           
+              });
+        });
+   
 
 
   })
@@ -118,28 +139,46 @@ function getAllUsers(res) {
 
 function getUserByUname(uname,password,res) {
    
-  User.findOne({phone:uname},(err,user)=>{
-      if(err)  return res.send({"error":err})
+ //write regex to deffrectiate between email and number:=
+  //check for password 
+  //return response
+    var phone= /^\+\d{1,3}-\d{9,10}$/;
+    var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var type = ''
+     if(phone.test(uname)){
+        type={"phone":uname}
 
-      if(user){
-        console.log(user.password);
-            if(user.password===password)
-           return res.send({"response":user});
-           return res.send({"response":"wrong password or username"});
-          }
+        } 
+     if(email.test(uname)){
 
-    User.find({email:uname},(err,user)=>{
-         if(err)  return err;
-         if(user){
-          if(user.password===password)
-         return res.send({"response":user});
-         return res.send({"response":"wrong password or username"});
-        }
-         
+       type= {"email":uname}
+     } 
+   console.log(type);
+     User.find(type,'password',(err,user)=>{
+        if(err) return res.send({"error":err})
+        //console.log(user);
+        //if user not found in tool:=
 
-      })
-      res.send({"response":"user not found"});
-  })
+           if(!user.length){
+              return res.send({"response":"username or password  is wrong"});
+            }
+
+       //check if user is in database
+        
+       bcrypt.compare(password,user[0].password, function(err, isMatch) {
+        // res == true
+         if(err) {  return res.send({"response":"some error in comapring"})}
+              
+                if(isMatch){
+                     res.send({"response":"login successfull"})
+                 }
+
+              else{ res.send({"response":"wrong password"})}
+        });
+        
+
+   })
+     
 
 
 
