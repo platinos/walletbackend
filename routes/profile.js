@@ -83,6 +83,12 @@ router.post('/contacts/add/:id/:fid',(req,res)=>{
 });
 
 
+router.get('/:id/saves',(req,res)=>{
+       var id = req.params.id; 
+   getSavedContent(id,res);
+
+
+  })
 
 /* Profile Router Functions */
 
@@ -248,5 +254,22 @@ if(docs[0]._id.equals(userId)){
 
 }
 
+
+function getSavedContent(id,res){
+
+      Profile.findById(id).select('saves').populate('saves.saved').exec(function(err,profile){
+             if(err) throw err;
+             if(!profile) return res.send({"response":"no user"});
+
+    res.send({"status":200,"response":profile});
+ 
+
+   });
+    
+
+
+
+
+}
 
 module.exports = router;
