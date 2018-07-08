@@ -55,7 +55,9 @@ router.put('/:id', function (req, res) {
   var name = req.body.name;
   var email = req.body.email;
   var active = req.body.active;
-  var data = {"_id":id,"name":name,"email":email,"active":active}
+ 
+  var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone,
+  "password":req.body.password}
   updateUserById(id, data,res);
 
 });
