@@ -6,9 +6,12 @@ var router = express.Router();
 
 /* GET users listing. */
 router.post('/', function (req, res, next) {
-    getAllContent(req,res);             //done
+    getAllContentPaged(req,res);             //done
 });
-
+router.get('/', function (req, res, next) {
+    var id = req.params.id;
+    getAllContent(id, res);   //by content Id     //not done
+});
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
     getContentById(id, res);   //by content Id     //not done
@@ -212,15 +215,59 @@ function postContent(req, res) {
     });
 }  */
 
-function getAllContent(req,res){
+function getAllContentPaged(req, res) {
     console.log('inside method');
     res.setHeader('Content-Type', 'application/json');
     var page = req.body.page;
     const pageSize = 10;
     Content.find()
+        .sort('-updated_at')
+        .skip(pageSize * page)
+        .limit(pageSize)
+        .populate({ path: 'user', select: 'name  ImageUrl _id' })
+        .populate('comments', 'comment likes user updated_at', null, { sort: { updated_at: -1 }, limit: 2, populate: { path: 'user', select: 'name ImageUrl _id' } }
+        )
+        .exec((err, contents) => {
+            if (err) return res.send({ "error": err });
+
+
+            var contentResponse = contents.map((item) => {
+                var doc = {
+                    "content": item.content,
+                    "Id": item._id,
+                    "PostByUser": { "Id": item.user._id, "image": item.user.ImageUrl, "name": item.user.name },
+                    "likesCount": item.likes.length,
+                    "sharesCount": item.shares.length,
+                    "createdAt": item.created_at,
+                    "updateAt": item.updated_at,
+                    "isShared": item.isShared,
+                    "parentContentId": item.parent,
+                    "commentsCount": item.comments.length,
+                    "comments": item.comments.map((item) => {
+                        return {
+                            "Id": item._id, "byUser": item.user, "likesCount": item.likes.length,
+                            "updatedAt": item.updated_at
+                        }
+                    })
+
+
+                }
+                return doc;
+
+
+            });
+            res.send({ "response": contentResponse });
+
+
+        });
+
+
+}
+
+function getAllContent(req,res){
+    res.setHeader('Content-Type', 'application/json');
+    Content.find()
     .sort('-updated_at')
-    .skip(pageSize*page)
-    .limit(pageSize)
     .populate({path:'user',select:'name  ImageUrl _id'})
    .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
     )
