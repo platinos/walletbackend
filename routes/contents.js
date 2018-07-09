@@ -287,6 +287,7 @@ function getAllContent(req,res){
                        "isShared":item.isShared,
                        "parentContentId":item.parent,
                         "commentsCount":item.comments.length,
+                        "image":item.image,
                         "comments":item.comments.map((item)=>{
                               return {
                                     "Id":item._id, "byUser":item.user,"likesCount":item.likes.length,
