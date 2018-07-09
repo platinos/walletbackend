@@ -172,7 +172,7 @@ function postContent(req, res) {
     var body = req.body.content;
     var id = req.params.id;
        //create content and assign id to content and save 
-       var data = {"content":body,"user":id}
+       var data = {"content":body,"user":id,"image":req.body.image}
   Profile.findById(id,(err,profile)=>{
       if(err)  return res.send({"error":err});
     Content.create(data,function(err,content){
