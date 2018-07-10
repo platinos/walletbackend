@@ -11,6 +11,7 @@ var profileRouter = require('./routes/profile');
 var contentRouter = require('./routes/contents');
 var testdb = require('./routes/testdb');
 var commentRouter = require('./routes/comment');
+var walletRouter = require('./routes/wallet')
 
 var app = express();
 
@@ -49,6 +50,7 @@ app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/content', contentRouter);
 app.use('/test', testdb);
 app.use('/api/v1/comment',commentRouter);
+app.use('/api/v1/wallet',walletRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

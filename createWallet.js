@@ -1,38 +1,20 @@
 
 const bitgo = require('./bitgoauth')
-
-/*bitgo.me({}, function callback(err, user) {
-    if (err) {
-      // handle error
-      return console.error(err)
-    }
-    // etc
-    console.log(user);
-
-  });
-
-  bitgo.fetchConstants()
-  .then(function(constants) {
-    // print constants
-    console.dir(constants);
-  })*/
-
-  /*var wallet;
-  var params = { 
-    "passphrase": "replaceme2", 
-    "label": "secondWallet"
-  }
-  bitgo.wallets().createWalletWithKeychains(params, function(err, result) {
-    console.log("jjdfjjdsjfjdsfjdsjfd")
-    if(err)  console.log(err);
-    wallet = result.wallet; 
-    console.dir(wallet.wallet);
-    console.log("Locally created keychain: " + result.userKeychain.encryptedXprv);
-  });  */
-let coin = 'tbtc';
-   //get wallets by id 
-  
-   
-  
-   //get wallets by address
-   
+let coin = 'tbtc'
+const label='my_wallet_one'
+const passphrase ='sheq_wallet_one'
+ 
+     
+          const walletOptions = {
+              label,
+              passphrase
+            };
+           
+            bitgo.coin('tltc').wallets()
+            .generateWallet({ label: 'My Test Wallet', passphrase: 'secretpassphrase1a5df8380e0e30' })
+            .then(function(wallet) {
+              // print the new wallet
+              console.dir(wallet);
+              consle.log(wallet.userKeychain);
+            });
+            
