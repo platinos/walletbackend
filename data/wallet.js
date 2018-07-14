@@ -2,19 +2,30 @@ const mongoose = require('mongoose');
 var Profile = require('../data/Profile.js')
 const Schema = mongoose.Schema;
 
-
-var walletSchema = new Schema ({
+//wallet to store userID and then wallets and their addresses.
+//store userId and wallet..
+ var walletSchema = new Schema ({
          userId:String,
-         walletId:[String],
-        uxprv:String,  //user private key
-         uxpub:String, //user public key
-        bxprv:String,  //backup private key
-        bxpub:String  //backup public key 
+         coin:String,
+         walletId:String,
+         addresses:[{address:String,date:{type:Date,default:Date.now}}],
+      backupKeychain:{ id: String,
+      users: [ String ],
+      pub: String,
+      ethAddress: String,
+      provider: String,
+      source: String } ,
+        userKeychain:{ id: String,
+        users: [ String ],
+        pub: String,
+        ethAddress: String,
+        encryptedPrv: String,
+        prv: String }
+                            
+      });
 
-          });
 
-
-     var Wallet = mongoose.model("Wallet",userSchema);
+     var Wallet = mongoose.model("Wallet",walletSchema);
      module.exports=Wallet;
 
 
