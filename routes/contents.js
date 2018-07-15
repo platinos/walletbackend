@@ -10,7 +10,7 @@ router.post('/', function (req, res, next) {
 });
 router.get('/', function (req, res, next) {
     var id = req.params.id;
-    getAllContent(id, res);   //by content Id     //not done
+    getAllContent(id, res);   
 });
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
@@ -175,6 +175,7 @@ function postContent(req, res) {
        var data = {"content":body,"user":id,"image":req.body.image}
   Profile.findById(id,(err,profile)=>{
       if(err)  return res.send({"error":err});
+      if(!profile) return res.send({"response":"InvalidUSerId"});
     Content.create(data,function(err,content){
         if(err)  throw err;
      profile.contents.push(content._id);
@@ -266,6 +267,7 @@ function getAllContentPaged(req, res) {
 
 function getAllContent(req,res){
     res.setHeader('Content-Type', 'application/json');
+
     Content.find()
     .sort('-updated_at')
     .populate({path:'user',select:'name  ImageUrl _id'})
@@ -276,6 +278,8 @@ function getAllContent(req,res){
    
           
        var contentResponse = contents.map((item)=>{
+            console.log(item);
+           
               var doc = {
                       "content":item.content,
                        "Id":item._id,
@@ -298,7 +302,7 @@ function getAllContent(req,res){
 
               }
               return doc;
-                 
+                
 
        }); 
        res.send({"response":contentResponse});
