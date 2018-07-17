@@ -441,7 +441,7 @@ function getCommentsByContentId(req,res){
          const  pageSize=10;
          var  skip = page*pageSize;
          if(page==0) {skip=2;}
-   Content.find({_id:req.params.contentId}).select('_id')
+   Content.find({_id:req.params.contentId}).select('_id likes')
    .populate('comments','_id comment updated_at',null
    ,{sort: { 'updated_at': -1 },limit:10,skip:skip,populate:{path:'user',select:'name ImageUrl _id'}}
    ,{populate:{path:'user',select:'name ImageUrl _id'}})

@@ -8,6 +8,7 @@ const Schema = mongoose.Schema;
          userId:String,
          coin:String,
          walletId:String,
+         passPhrase:String,
          addresses:[{address:String,date:{type:Date,default:Date.now}}],
       backupKeychain:{ id: String,
       users: [ String ],

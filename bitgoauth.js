@@ -1,5 +1,5 @@
 var BitGo = require('bitgo');
-const token =  'v2x850744f346dc25a04a4057f2fcefd2905116e4825f43c34351b4fb01ff88ff24'
+const token =  'v2x0df1d25b47c8576cc9df96ee2fe65f682ece33a61cdc422bf609085d8e8ea48e'
 var bitgo = new BitGo.BitGo({ accessToken:token}); // defaults to testnet. add env: 'prod' if you want to go against mainnet
 let coin = bitgo.coin('tbtc');
 module.exports=bitgo;

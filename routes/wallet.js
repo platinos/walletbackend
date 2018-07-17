@@ -35,6 +35,13 @@ router.post('/:id',function(req,res){
 
     })
 
+    router.post('/makeTransaction/type',(req,res)=>{
+      console.log("hi******************************");
+      //res.send({"response":{"id":req.body.walletId,"address":req.body.destAddress}})
+ sendTransaction(req.body.walletId,req.body.destAddress,req.body.amount,res);
+
+      });
+
 function getWallet(wId,coinType,res){
   var wallets = bitgo.coin(coinType).wallets();
   var data = {
@@ -45,7 +52,8 @@ function getWallet(wId,coinType,res){
       return conmsole.error(err)
     }
     console.dir(wallet);
-    res.send({"response":wallet._wallet})
+    res.send({"response":wallet._wallet});
+
     
   });
  
@@ -81,36 +89,9 @@ function getWallet(wId,coinType,res){
     
 } 
 
-/*function createWallet(req,res){
-      let label = req.body.label;
-      let passphrase =req.body.password;
-      let id = req.params.id
-    var data = {
-      "passphrase":passphrase ,
-      "label": label,
-      "backupXpubProvider": "keyternal"
-      }
-    
-    bitgo.wallets().createWalletWithKeychains(data, function(err, result) {
-      if (err) { console.dir(err); throw new Error("Could not create wallet!"); }
-      console.dir(result.wallet.wallet);
-      console.log("User keychain encrypted xPrv: " + result.userKeychain.encryptedXprv);
-      console.log("Backup keychain xPub: " + result.backupKeychain.xPub);
-      console.log(result.userKeychain);
-      console.log(result.backupKeychain);
-
-      var data = {"userId":id,"walletId":result.wallet.wallet.id,userKeychain:result.userKeychain,
-      backupKeychain:result.backupKeychain}
-    Wallet.create(data,function (err,newWallet){
-        if(err)  return console.error(err);
-           return res.send({"response":newWallet ,"wallet":result.wallet.wallet});
-        })
-    
-      })
-    
-}  */            
+         
              
-   function  generateAddress(req,res){
+function  generateAddress(req,res){
 
     let wId = req.params.wId;
     //generate addresss for the respective wallet 
@@ -137,6 +118,44 @@ function getWallet(wId,coinType,res){
         })         
 
    }
+
+
+
+   function sendTransaction(walletId,destAddress,amount,res){
+               console.log("****************************************************");
+               console.log("destAddress is "+ destAddress);
+    Wallet.findOne({"walletId":walletId},function(err,walletData){
+         if(err)  return console.error(err);
+         if(!walletData)  return res.send({"response":"InvalidWalletId"});
+            console.log("the address is destAddress"+  destAddress);
+           let params = {
+                  amount: "1",  //amount in integer
+                  address: destAddress,  //destination address
+                  walletPassphrase: walletData.passPhrase //walletpassPhrase
+                  };
+                  var wallets = bitgo.coin('tbtc').wallets();
+                  var data = {
+                    "id":walletId
+                   };
+                   wallets.get(data, function callback(err, wallet) {
+                    if (err) {
+                      return conmsole.error(err)
+                    }
+                    wallet.send(params,(err,transaction)=>{
+                      if(err)  return  res.send({"error":err});
+                      res.send({"response":transaction});
+
+                    })
+                    
+                  });
+                  
+       }) ;   
+
+     
+      }
+
+
+    
 
 
    module.exports = router;
