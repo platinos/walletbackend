@@ -172,10 +172,10 @@ function getUserByUname(uname,password,res) {
          if(err) {  return res.send({"response":"some error in comapring"})}
               
                 if(isMatch){
-                     res.send({"response":"success"})
+                     res.send({"response":user,"success":"success"})
                  }
 
-              else{ res.send({"response":"wrong password"})}
+              else{ res.send({"response":"wrong password","error":"error"})}
         });
         
 
