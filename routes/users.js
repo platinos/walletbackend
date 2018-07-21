@@ -156,7 +156,7 @@ function getUserByUname(uname,password,res) {
        type= {"email":uname}
      } 
    console.log(type);
-     User.find(type,'password',(err,user)=>{
+     User.find(type,(err,user)=>{
         if(err) return res.send({"error":err})
         //console.log(user);
         //if user not found in tool:=
