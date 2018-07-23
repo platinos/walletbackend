@@ -9,7 +9,11 @@ var router = express.Router();
 const bitgo = require('../bitgoauth.js')
 const Wallet = require('../data/wallet.js')
  
+router.get('/:uid', function (req, res) {
 
+  getWalletForUser(req, res);
+
+})
 router.post('/:id',function(req,res){
  //api to create wallet 
  //body:{label,password}
@@ -84,7 +88,7 @@ router.post('/:id',function(req,res){
               }
 
 
-function getWallet(wId,coinType,res){
+function getWallet(wId, coinType,,res){
   var wallets = bitgo.coin(coinType).wallets();
   var data = {
     "id": wId
@@ -100,6 +104,20 @@ function getWallet(wId,coinType,res){
   });
  
     }
+function getWalletForUser(req,res){
+  var uid = req.body.userId;
+   wallet.findOne({"userId":uid},(err,walletData)=>{
+
+    if(!walletData){
+      res.send({ "error": "wallet not found: "+err });
+    }
+    else{
+      res.send({ "response": walletData });
+    }
+   });
+  
+ 
+}
   
     function createWallet(req,res){
       let label = req.body.label;
