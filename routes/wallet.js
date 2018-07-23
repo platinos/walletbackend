@@ -105,7 +105,7 @@ function getWallet(wId, coinType,,res){
  
     }
 function getWalletForUser(req,res){
-  var uid = req.body.userId;
+  var uid = req.params.uid;
    wallet.findOne({"userId":uid},(err,walletData)=>{
 
     if(!walletData){
