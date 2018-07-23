@@ -8,12 +8,7 @@ var Requests = require('../data/FriendRequests')
 var router = express.Router();
 const bitgo = require('../bitgoauth.js')
 const Wallet = require('../data/wallet.js')
-router.post('/create/:id',function(req,res){
-     console.log("hello***********")
-  createWallet(req.params.id,res);
-
-
-    })
+ 
 
 router.post('/:id',function(req,res){
  //api to create wallet 
@@ -44,15 +39,46 @@ router.post('/:id',function(req,res){
 
       router.post('/makeTransactionToMany/type/many',(req,res)=>{
                 var data = { "walletId":req.body.walletId,
-                               "recipients":req.body.recipients }
+                               "recipients":req.body.recipients,"coin":req.body.coin }
                sendTransactionsToMany(data,res);
 
 
             });
 
 
+
     function sendTransactionsToMany(data,res){
-             
+         let walletId=data.walletId;
+           let coin = data.coin;
+      Wallet.findOne({"walletId":walletId},function(err,walletData){
+        if(err)  return console.error(err);
+        if(!walletData)  return res.send({"response":"InvalidWalletId"});
+           console.log("the address is destAddress"+  destAddress);
+          let params = {
+                 recipients:data.recipients,//array of {amount,addresses}
+                 walletPassphrase: walletData.passPhrase 
+                  };
+                 var wallets = bitgo.coin(coin).wallets();
+                 var data = {
+                   "id":walletId
+                  };
+                  wallets.get(data, function callback(err, wallet) {
+                   if (err) {
+                     return console.error(err)
+                   }
+                   wallet.sendMany(params,(err,transaction)=>{
+                     console.log(params);
+                     console.log(err)
+                     if(err)  return  res.send({"error":err});
+                     res.send({"response":transaction});
+
+                   })
+                   
+                 });
+                 
+      }) ; 
+
+
 
 
               }
@@ -79,6 +105,7 @@ function getWallet(wId,coinType,res){
       let label = req.body.label;
       let passphrase =req.body.password;
       let id = req.params.id
+      let coin =req.body.coin
     var data = {
       "passphrase":passphrase ,
       "label": label,
@@ -138,8 +165,7 @@ function  generateAddress(req,res){
 
 
    function sendTransaction(walletId,destAddress,amount,res){
-               console.log("****************************************************");
-               console.log("destAddress is "+ destAddress);
+              
     Wallet.findOne({"walletId":walletId},function(err,walletData){
          if(err)  return console.error(err);
          if(!walletData)  return res.send({"response":"InvalidWalletId"});
@@ -173,7 +199,29 @@ function  generateAddress(req,res){
       }
 
 
-    
+   
+      router.get('/:coin/:walletId/transfer',function(req,res){
+
+         let walletId = req.params.walletId;
+         let coin = req.params.coin;
+
+         var wallets = bitgo.coin(coin).wallets();
+         var data = {
+           "id":walletId
+          };
+          wallets.get(data, function callback(err, wallet) {
+           if (err) {
+             return console.error(err)
+             }
+
+             wallet.transfers(err,function(err,transfers){
+                if(err) return console.error(err);
+                res.send({"response":transfers});
+           });
+             
+          });
+      
+        })
 
 
    module.exports = router;
