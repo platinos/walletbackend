@@ -107,7 +107,7 @@ function getWallet(wId, coinType,,res){
 function getWalletForUser(req,res){
   var uid = req.params.uid;
    wallet.findOne({"userId":uid},(err,walletData)=>{
-
+     if (err) { return res.send({ "error":  err })}
     if(!walletData){
       res.send({ "error": "wallet not found: "+err });
     }
