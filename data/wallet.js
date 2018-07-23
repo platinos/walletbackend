@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 
 //wallet to store userID and then wallets and their addresses.
 //store userId and wallet..
+
+delete mongoose.connection.models[Wallet];
  var walletSchema = new Schema ({
          userId:String,
          coin:String,
