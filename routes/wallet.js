@@ -88,7 +88,7 @@ router.post('/:id',function(req,res){
               }
 
 
-function getWallet(wId, coinType,,res){
+function getWallet(wId, coinType, res){
   var wallets = bitgo.coin(coinType).wallets();
   var data = {
     "id": wId
