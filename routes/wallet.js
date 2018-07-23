@@ -37,8 +37,7 @@ router.post('/:id',function(req,res){
     router.post('/makeTransaction/type',(req,res)=>{
       console.log("hi******************************");
       //res.send({"response":{"id":req.body.walletId,"address":req.body.destAddress}})
- sendTransaction(req.body.walletId,req.body.destAddress,req.body.amount,res);
-
+    sendTransaction(req.body.walletId,req.body.destAddress,req.body.amount,res);
       });
 
       router.post('/makeTransactionToMany/type/many',(req,res)=>{
