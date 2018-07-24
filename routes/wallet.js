@@ -182,16 +182,17 @@ function  generateAddress(req,res){
 
 
    function sendTransaction(walletId,destAddress,amount,res){
-              
+              console.log("inside send transaction");
     Wallet.findOne({"walletId":walletId},function(err,walletData){
-         if(err)  return console.error(err);
+         console.log(walletData)
+         if(err)  {return console.error(err);}
          if(!walletData)  return res.send({"response":"InvalidWalletId"});
             console.log("the address is destAddress"+  destAddress);
            let params = {
                   amount: amount,  //amount in integer
                   address: destAddress,  //destination address
                   walletPassphrase: walletData.passPhrase //walletpassPhrase
-                  };
+                    };
                   var wallets = bitgo.coin('tbtc').wallets();
                   var data = {
                     "id":walletId
@@ -200,10 +201,11 @@ function  generateAddress(req,res){
                     if (err) {
                       return console.error(err)
                     }
+                    console.log(wallet)
                     wallet.send(params,(err,transaction)=>{
                       console.log(params);
                       console.log(err)
-                      if(err)  return  res.send({"error":err});
+                      if(err)  return  res.send({"error":wallet});
                       res.send({"response":transaction});
 
                     })
@@ -217,7 +219,7 @@ function  generateAddress(req,res){
 
 
    
-      router.get('/:coin/:walletId/transfer',function(req,res){
+  router.get('/:coin/:walletId/transfer',function(req,res){
 
          let walletId = req.params.walletId;
          let coin = req.params.coin;
@@ -239,7 +241,26 @@ function  generateAddress(req,res){
           });
       
         })
+     
 
+  router.get('/getWallets/all/v1/v2',(req,res)=>{
+   getAllWallets(res);
+
+  })    
+  //to get all wallets of user
+function getAllWallets(res){
+        
+          Wallet.find().sort('userId').populate('userId').exec((err,wallets)=>{
+
+             if(err)  return console.error(err)
+
+             if(!wallets.length)  return res.send({"error":"empty"})
+              
+                res.send({"response":wallets})
+               
+              })
+        
+        }
 
    module.exports = router;
 

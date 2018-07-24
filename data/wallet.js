@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 var Profile = require('../data/Profile.js')
 const Schema = mongoose.Schema;
-
+var User = require('../data/user.js');
 //wallet to store userID and then wallets and their addresses.
 //store userId and wallet..
 
 delete mongoose.connection.models[Wallet];
  var walletSchema = new Schema ({
-         userId:String,
+         userId:{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
          coin:String,
          walletId:String,
          passPhrase:String,
