@@ -191,7 +191,7 @@ function  generateAddress(req,res){
            let params = {
                   amount: amount,  //amount in integer
                   address: destAddress,  //destination address
-                  walletPassphrase: walletData.passPhrase //walletpassPhrase
+                  walletPassphrase: "12345" //walletpassPhrase
                     };
                   var wallets = bitgo.coin('tbtc').wallets();
                   var data = {
@@ -205,7 +205,7 @@ function  generateAddress(req,res){
                     wallet.send(params,(err,transaction)=>{
                       console.log(params);
                       console.log(err)
-                      if(err)  return  res.send({"error":wallet});
+                      if(err)  return  res.send({"error":err});
                       res.send({"response":transaction});
 
                     })
