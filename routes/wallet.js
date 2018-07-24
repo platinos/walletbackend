@@ -37,7 +37,7 @@ router.post('/:id',function(req,res){
     router.post('/makeTransaction/type',(req,res)=>{
       console.log("hi******************************");
       //res.send({"response":{"id":req.body.walletId,"address":req.body.destAddress}})
-    sendTransaction(req.body.walletId,req.body.destAddress,req.body.amount,res);
+    sendTransaction(req.body.walletId,req.body.destAddress,req.body.amount,req.body.passphrase, res);
       });
 
       router.post('/makeTransactionToMany/type/many',(req,res)=>{
@@ -181,7 +181,7 @@ function  generateAddress(req,res){
 
 
 
-   function sendTransaction(walletId,destAddress,amount,res){
+function sendTransaction(walletId, destAddress, amount, passphrase,res){
               console.log("inside send transaction");
     Wallet.findOne({"walletId":walletId},function(err,walletData){
          console.log(walletData)
@@ -191,7 +191,7 @@ function  generateAddress(req,res){
            let params = {
                   amount: amount,  //amount in integer
                   address: destAddress,  //destination address
-                  walletPassphrase: "12345" //walletpassPhrase
+                  walletPassphrase: passphrase //walletpassPhrase
                     };
                   var wallets = bitgo.coin('tbtc').wallets();
                   var data = {
