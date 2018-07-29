@@ -138,7 +138,7 @@ function getWalletForUser(req,res){
       console.log(result.backupKeychain);
 
       var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
-      "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passPhrase}
+      "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase}
       data.addresses.push({"address":result.wallet._wallet.receiveAddress.address});
       console.log(data)
     Wallet.create(data,function (err,newWallet){
