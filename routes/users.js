@@ -12,6 +12,10 @@ router.get('/', function (req, res, next) {
 
 
 
+router.get('/phone/:phoneNo', function (req, res, next) {
+  var phoneNo = req.params.phoneNo;
+  getUserByPhone(phoneNo, res);
+});
 
 router.get('/:id', function (req, res, next) {
   var id = req.params.id;
@@ -138,6 +142,22 @@ function getAllUsers(res) {
 
 
 }
+
+function getUserByPhone(phoneNo, res){
+  type = { "phone": phoneNo };
+  User.find(type, (err, user) => {
+    if (err) return res.send({ "error": err });
+
+    if (!user.length) {
+      return res.send({ "registered": false });
+    }
+    else {
+      return res.send({ "registered": true });
+    }
+  });
+
+}
+
 
 function getUserByUname(uname,password,res) {
    
