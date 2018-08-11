@@ -72,7 +72,7 @@ router.put('/:id', function (req, res) {
     var active = req.body.active;
     var status= req.body.status;
     var about = req.body.about;
-    var data = { "_id":id,"address":address,"dob":dob,"active":active,"status":status,"about":about }
+    var data = { "address":address,"dob":dob,"active":active,"status":status,"about":about }
     updateProfileById(id, data, res);
 
 });
@@ -138,7 +138,7 @@ function getProfileById(id, res) {
 function updateProfileById(id, data, res) {
     res.setHeader('Content-Type', 'application/json');
     Profile.findByIdAndUpdate(id, data, function (err, profile) {
-        if (err) return res.sendStatus(404);
+        if (err) return res.send({"error":err});
         if (!profile) return res.send(401);
 
         res.send(JSON.stringify({ "status": 200, "error": null, "response": profile }));

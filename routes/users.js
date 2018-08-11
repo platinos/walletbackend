@@ -140,9 +140,9 @@ function postUser(data, res) {
 
 function getAllUsers(res) {
   res.setHeader('Content-Type', 'application/json');
-  User.find((err,user)=>{
+  User.find({},"-password",(err,user)=>{
    if(err)   res.send(JSON.stringify({ "error":"no user data", "response": null}));
-
+        
    res.send(JSON.stringify({ "status": 200, "error": null, "response": user }));
 
 
@@ -185,22 +185,23 @@ function getUserByUname(uname,password,res) {
        type= {"email":uname}
      } 
    console.log(type);
-     User.find(type,(err,user)=>{
+     User.findOne(type,(err,user)=>{
         if(err) return res.send({"error":err})
         //console.log(user);
         //if user not found in tool:=
 
-           if(!user.length){
+           if(!user){
               return res.send({"response":"username or password  is wrong"});
             }
 
        //check if user is in database
         
-       bcrypt.compare(password,user[0].password, function(err, isMatch) {
+       bcrypt.compare(password,user.password, function(err, isMatch) {
         // res == true
          if(err) {  return res.send({"response":"some error in comapring"})}
               
                 if(isMatch){
+                    user.password=null
                      res.send({"response":user,"success":"success"})
                  }
 

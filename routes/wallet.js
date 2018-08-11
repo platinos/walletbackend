@@ -176,11 +176,22 @@ function getWalletForUser(req,res){
       res.send({ "response": walletData });
     }
    });
+
+
+
   
  
 }
   
-    function createWallet(req,res){
+
+function createMultipleWallets(req,res){
+
+        
+
+
+    }  
+
+  function createWallet(req,res){
       let label = req.body.label;
       let passphrase =req.body.password;
       let id = req.params.id
@@ -191,21 +202,18 @@ function getWalletForUser(req,res){
       "backupXpubProvider": "keyternal"
       }
     
-    bitgo.coin('tbtc').wallets().generateWallet(data, function(err, result) {
+    bitgo.coin(coin).wallets().generateWallet(data, function(err, result) {
       if (err) { console.dir(err); throw new Error("Could not create wallet!"); }
-      console.dir(result.wallet._wallet);
-      console.log("User keychain encrypted xPrv: " + result.userKeychain.encryptedXprv);
-      console.log("Backup keychain xPub: " + result.backupKeychain.xPub);
-      console.log(result.userKeychain);
-      console.log(result.backupKeychain);
-
-      var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
+      
+ var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
       "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase}
       data.addresses.push({"address":result.wallet._wallet.receiveAddress.address});
-      console.log(data)
+      
     Wallet.create(data,function (err,newWallet){
         if(err)  return res.send({"error":err});
-           return res.send({"response":newWallet ,"wallet":result.wallet._wallet});
+
+              return res.send({"response":newWallet ,"wallet":result.wallet._wallet});
+
         })
     
       })

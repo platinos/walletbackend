@@ -1,5 +1,5 @@
 
-const bitgo = require('./bitgoauth')
+/*const bitgo = require('./bitgoauth')
 let coin = 'tbtc'
 const label='my_wallet_one'
 const passphrase ='sheq_wallet_one'
@@ -18,3 +18,4 @@ const passphrase ='sheq_wallet_one'
               consle.log(wallet.userKeychain);
             });
             
+*/

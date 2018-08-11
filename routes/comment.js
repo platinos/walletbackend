@@ -18,7 +18,7 @@ router.put("/editComment/:commentId",(req,res)=>{
 
 });
 
-router.post("/addLike/:cId:/:uId",(req,res)=>{
+router.post("/addLike/:cId/:uId",(req,res)=>{
                 
      addLikeToComment(req,res);
     
