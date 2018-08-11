@@ -20,6 +20,6 @@ var ShopSchema = new Schema({
                            
                            
 var Shop = mongoose.model("Shop",ShopSchema);
-    module.exports=Content;
+    module.exports=Shop;
 
         

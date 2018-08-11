@@ -3,22 +3,22 @@ var User = require('../data/Contents.js');
 var Content = require('../data/Contents.js');
 const Profile = require('../data/Profile.js');
 var Wallet = require('../data/wallet.js')
+var Shop = require('../data/Shop.js')
 var router = express.Router();
 
 
 router.post('/create',(req,res)=>{
   
-    var data = {owners:req.body.owners,Icon:req.body.Icon, Name:String,
+    var data = {owners:req.body.owners,Icon:req.body.Icon, Name:req.body.Name,
     Description:req.body.Description,
     CoverImage:req.body.CoverImage,
     Category:req.body.Category,
     Address:req.body.Address,
     wallets:req.body.wallets}
-       
-    createShop(data,res);
+   createShop(data,res);
  });
 
-function createshop(data,res){
+function createShop(data,res){
 
    if(data.owners===undefined){}
 
@@ -35,7 +35,13 @@ function createshop(data,res){
       } 
       
       }); */
-      res.send({"response":shop})
+      Shop.find({_id:shop._id}).populate('owners').exec((err,shop)=>{
+
+        if(err)  return res.send({"error":err})
+        res.send({"response":shop})
+
+      });
+     
     })
 
 
@@ -52,9 +58,9 @@ router.get('/:id',(req,res)=>{
  });
 
  function getShopById(id,res){
-   Shop.findOne(id).populate('owners').populate('wallets').exec((err,shop)=>{
+   Shop.findOne({_id:id}).populate('owners').populate('wallets').exec((err,shop)=>{
      if(err)  return res.send({"error":err})
-     if(!shop) return res.send({"empty":yes})
+     if(!shop) return res.send({"empty":"yes"})
      res.send({"response":shop})
    
      })
@@ -62,7 +68,7 @@ router.get('/:id',(req,res)=>{
 
     }
 
-router.get('/:userId',(req,res)=>{
+router.get('/user/:userId',(req,res)=>{
   getShopByUser(req.params.userId,res);
      
     
@@ -75,13 +81,14 @@ router.get('/:userId',(req,res)=>{
         return res.send({ "error": err });
       if (!shops.length)
         return res.send({ "empty": "yes" });
-      var shop;
-      for (shop in shops) {
-        if (shop.owners != undefined && shop.owners.length) {
-          var user;
-          for (user in shop.owners) {
-            if (user.equals(userId)) {
-              resShops.push(shop);
+      var i=0;
+      for (i in shops) {
+          
+        if (shops[i].owners != undefined) {
+          var j=0;
+          for (j in shops[i].owners) {
+            if (shops[i].owners[j].equals(userId)) {
+              resShops.push(shops[i]);
               break;
             }
           }
@@ -99,17 +106,22 @@ router.put('/update/:shopId',(req,res)=>{
 
     function updateShop(id,data,res){
 
-      Shop.findByIdAndUpdate(id,data,(err,Shop)=>{
+      Shop.findByIdAndUpdate(id,data,(err,shop)=>{
           if(err) return res.send({"error":err})
+         
+          Shop.findById(shop._id,(err,updatedshop)=>{
+            if(err)  return res.send({"error":err})
 
+            res.send({"response":updatedshop});  
+          })
           
 
 
-        })
+           })
 
 
 
-    }
+     }
 
 router.delete('/:id',(req,res)=>{
    
@@ -118,5 +130,5 @@ router.delete('/:id',(req,res)=>{
      });
 
 
-
+     module.exports = router;
 
