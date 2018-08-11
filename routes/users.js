@@ -65,6 +65,15 @@ router.put('/:id', function (req, res) {
   updateUserById(id, data,res);
 
 });
+router.put('/updatepic/:id', function (req, res) {
+  var id = req.params.id;
+
+  var data = {
+    "ImageUrl": req.body.ImageUrl
+  }
+  updateUserById(id, data, res);
+
+});
 
 
 router.delete('/:id', function (req, res) {
