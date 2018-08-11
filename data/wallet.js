@@ -12,6 +12,7 @@ delete mongoose.connection.models[Wallet];
          walletId:String,
          passPhrase:String,
          addresses:[{address:String,date:{type:Date,default:Date.now}}],
+         type:String,
       backupKeychain:{ id: String,
       users: [ String ],
       pub: String,

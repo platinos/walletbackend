@@ -86,7 +86,7 @@ Content.findById(contentId,(err,content)=>{
     content.save((e,c)=>{
     if(e)   throw e;
          //just for now getting profie to add to save value
-         Profie.findById(likerId,(err,profile)=>{
+         Profile.findById(likerId,(err,profile)=>{
            if(err)  return console.log(err);
            profile.saves.push(contentId);
            profile.save((err,profiles)=>{
@@ -112,7 +112,7 @@ Content.findById(contentId,(err,content)=>{
         content.save((err,content)=>{
             if(err)  return console.error(err);
 
-            Profie.findById(likerId,(err,profile)=>{
+            Profile.findById(likerId,(err,profile)=>{
                 if(err)  return console.log(err);
                 profile.saves.pull(contentId);
                 profile.save((err,profiles)=>{

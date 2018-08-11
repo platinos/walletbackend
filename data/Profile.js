@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 var User = require('../data/user.js');
 var Content = require('../data/Contents.js');
+var Wallet = require('../data/wallet.js')
+var Shop=require('../data/Shop.js')
 const Schema = mongoose.Schema;
 delete mongoose.connection.models['Profile'];
 var ProfileSchema = new Schema({
@@ -14,7 +16,9 @@ var ProfileSchema = new Schema({
        contacts:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
        contents:[{type:mongoose.Schema.Types.ObjectId,ref:'Content'}],
-       saves:[{saved:{type:mongoose.Schema.Types.ObjectId,ref:'Content'}}]//ref for posts saved by user.
+       saves:[{saved:{type:mongoose.Schema.Types.ObjectId,ref:'Content'}}],//ref for posts saved by user.
+       wallets:[{type:mongoose.Schema.Types.ObjectId,ref:'Wallet'}],
+       shops:[{type:mongoose.Schema.Types.ObjectId,ref:'Shop'}]
 
 });
 
