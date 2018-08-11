@@ -13,13 +13,49 @@ router.get('/:uid', function (req, res) {
 
   getWalletForUser(req, res);
 
+});
+
+router.get('/:coin/:walletId/transfer', function (req, res) {
+
+  let walletId = req.params.walletId;
+  let coin = req.params.coin;
+
+  var wallets = bitgo.coin(coin).wallets();
+  var data = {
+    "id": walletId
+  };
+  wallets.get(data, function callback(err, wallet) {
+    if (err) {
+      return console.error(err)
+    }
+
+    wallet.transfers(err, function (err, transfers) {
+      if (err) return console.error(err);
+      res.send({ "response": transfers });
+    });
+
+  });
+
 })
+
+
+router.get('/getWallets/all/v1/v2', (req, res) => {
+  getAllWallets(res);
+
+})    
+
+router.post('/addcoinstowallet', function (req, res) {
+  addCoinToAddress(req, res);
+});
+
 router.post('/:id',function(req,res){
  //api to create wallet 
  //body:{label,password}
    createWallet(req,res);
 
-  })
+  });
+
+
 
   router.get('/createAddress/:wId/:coin',function (req,res){
 
@@ -103,6 +139,32 @@ function getWallet(wId, coinType, res){
   });
  
     }
+
+function addCoinToAddress(req,res){
+  let params = {
+    amount: req.body.amount,  //amount in integer
+    address: req.body.myaddress,  //destination address
+    walletPassphrase: '12345' //walletpassPhrase
+  };
+  var wallets = bitgo.coin('tbtc').wallets();
+  var data = {
+    "id": '5b57794a6609bea003434dbecddeb2eb'
+  };
+  wallets.get(data, function callback(err, wallet) {
+    if (err) {
+      return console.error(err)
+    }
+    
+    wallet.send(params, (err, transaction) => {
+      console.log(params);
+      console.log(err)
+      if (err) return res.send({ "error": err });
+      res.send({ "response": transaction });
+    });
+
+  });
+ 
+}
 function getWalletForUser(req,res){
   var uid = req.params.uid;
    Wallet.findOne({"userId":uid},(err,walletData)=>{
@@ -227,35 +289,7 @@ function sendTransaction(walletId, destAddress, amount, passphrase,res){
       }
 
 
-   
-  router.get('/:coin/:walletId/transfer',function(req,res){
-
-         let walletId = req.params.walletId;
-         let coin = req.params.coin;
-
-         var wallets = bitgo.coin(coin).wallets();
-         var data = {
-           "id":walletId
-          };
-          wallets.get(data, function callback(err, wallet) {
-           if (err) {
-             return console.error(err)
-             }
-
-             wallet.transfers(err,function(err,transfers){
-                if(err) return console.error(err);
-                res.send({"response":transfers});
-           });
-             
-          });
-      
-        })
-     
-
-  router.get('/getWallets/all/v1/v2',(req,res)=>{
-   getAllWallets(res);
-
-  })    
+  
   //to get all wallets of user
 function getAllWallets(res){
         
