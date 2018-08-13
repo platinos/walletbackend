@@ -12,7 +12,7 @@ var contentRouter = require('./routes/contents');
 var testdb = require('./routes/testdb');
 var commentRouter = require('./routes/comment');
 var walletRouter = require('./routes/wallet')
-var shopRouter = require('./routes/shop.js');
+var shopRouter = require('./routes/shop');
 
 var app = express();
 
