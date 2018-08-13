@@ -130,7 +130,7 @@ function getWallet(wId, coinType, res){
    };
    wallets.get(data, function callback(err, wallet) {
     if (err) {
-      return conmsole.error(err)
+      return console.error(err)
     }
     console.dir(wallet);
     res.send({"response":wallet._wallet});
@@ -194,19 +194,20 @@ function createMultipleWallets(req,res){
   function createWallet(req,res){
       let label = req.body.label;
       let passphrase =req.body.password;
-      let id = req.params.id
-      let coin =req.body.coin
+      let id = req.params.id;
+      let coin =req.body.coin;
+      let type = req.body.type;
     var data = {
       "passphrase":passphrase ,
       "label": label,
-      "backupXpubProvider": "keyternal"
+      //"backupXpubProvider": "keyternal"
       }
     
     bitgo.coin(coin).wallets().generateWallet(data, function(err, result) {
       if (err) { console.dir(err); throw new Error("Could not create wallet!"); }
       
  var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
-      "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase}
+   "backupKeychain": result.backupKeychain, "addresses": [], "passPhrase": passphrase, "type": type}
       data.addresses.push({"address":result.wallet._wallet.receiveAddress.address});
       
     Wallet.create(data,function (err,newWallet){
