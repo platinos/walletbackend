@@ -1,5 +1,5 @@
 var express = require('express');
-var Product = require('../data/Product.js');
+var Product = require('../data/product.js');
 var router = express.Router();
 
 router.post('/', (req, res) => {
