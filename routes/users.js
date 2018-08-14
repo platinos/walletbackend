@@ -173,7 +173,7 @@ function getUserByUname(uname,password,res) {
  //write regex to deffrectiate between email and number:=
   //check for password 
   //return response
-    var phone= /^\+\d{1,3}-\d{9,10}$/;
+    var phone= /^\+\d{1,3}\d{9,10}$/;
     var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var type = ''
      if(phone.test(uname)){
