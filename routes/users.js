@@ -175,7 +175,7 @@ function getUserByUname(uname,password,res) {
   //return response
     //var phone= /^\+\d{1,3}\d{9,10}$/;
    // var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-   type={"phone":uname}
+   type={"phone":uname};
 
    console.log(type);
      User.findOne(type,(err,user)=>{
@@ -191,7 +191,7 @@ function getUserByUname(uname,password,res) {
         
        bcrypt.compare(password,user.password, function(err, isMatch) {
         // res == true
-         if(err) {  return res.send({"response":"some error in comapring"})}
+         if(err) {  return res.send({"response":"some error in comapring"+err})}
               
                 if(isMatch){
                     user.password=null
