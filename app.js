@@ -53,7 +53,7 @@ app.use('/test', testdb);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/wallet', walletRouter);
 app.use('/api/v1/shop', shopRouter);
-app.use('/api/v1/product', productRouter);
+//app.use('/api/v1/product', productRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
