@@ -173,17 +173,10 @@ function getUserByUname(uname,password,res) {
  //write regex to deffrectiate between email and number:=
   //check for password 
   //return response
-    var phone= /^\+\d{1,3}\d{9,10}$/;
-    var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var type = ''
-     if(phone.test(uname)){
-        type={"phone":uname}
+    //var phone= /^\+\d{1,3}\d{9,10}$/;
+   // var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+   type={"phone":uname}
 
-        } 
-     if(email.test(uname)){
-
-       type= {"email":uname}
-     } 
    console.log(type);
      User.findOne(type,(err,user)=>{
         if(err) return res.send({"error":err})
