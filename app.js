@@ -13,7 +13,7 @@ var testdb = require('./routes/testdb');
 var commentRouter = require('./routes/comment');
 var walletRouter = require('./routes/wallet')
 var shopRouter = require('./routes/shop');
-
+var productRouter = require('./routes/product');
 var app = express();
 
 // view engine setup
@@ -53,6 +53,7 @@ app.use('/test', testdb);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/wallet', walletRouter);
 app.use('/api/v1/shop', shopRouter);
+app.use('/api/v1/product', productRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
