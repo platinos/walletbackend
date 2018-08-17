@@ -18,7 +18,10 @@ var ProfileSchema = new Schema({
        contents:[{type:mongoose.Schema.Types.ObjectId,ref:'Content'}],
        saves:[{saved:{type:mongoose.Schema.Types.ObjectId,ref:'Content'}}],//ref for posts saved by user.
        wallets:[{type:mongoose.Schema.Types.ObjectId,ref:'Wallet'}],
-       shops:[{type:mongoose.Schema.Types.ObjectId,ref:'Shop'}]
+       shops:[{type:mongoose.Schema.Types.ObjectId,ref:'Shop'}],
+       sent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+       friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
 
 });
 

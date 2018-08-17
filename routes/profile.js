@@ -6,34 +6,48 @@ const mongoose = require('mongoose');
 var Requests = require('../data/FriendRequests')
 var router = express.Router();
 
-//********** do not touch this
+//********** Send friend request **********//
 router.post('/addrequest/:id/:fid',(req,res)=>{
-      var id = req.params.id;
-      var fid=req.params.fid;
-
-    Requests.findById(fid,function(err,friend){
+    var id = req.params.id;
+    var fid=req.params.fid;
+    Profile.findById(fid,function(err,friend){
         if(err)  return console.error(err);
-        friend.requests.push(id);
-
+        friend.friendRequests.push(id);
         friend.save((err,friend)=>{
           if(err) return console.error(err);
-            Requests.findById(id,(err,user)=>{
+            Profile.findById(id,(err,user)=>{
                 if(err)  return console.error(err);
-            user.sent.push(fid);
-            user.save((e,u)=>{
-
+                user.sent.push(fid);
+                user.save((e,u)=>{
                 if(e) return console.error(e);
                 res.send({"response":[u,friend]});
+                })
             })
-
         })
-        
- })
-           })
-
-
-    })   
+    })
+})
     
+//**********Accept friend request **********//
+router.post('/acceptrequest/:id/:fid', (req, res) => {
+    var id = req.params.id;
+    var fid = req.params.fid;
+    Profile.findById(fid, function (err, friend) {
+        if (err) return res.send({ "error": "Wrong Friend Id."});
+        friend.friendRequests.push(id);
+        friend.save((err, friend) => {
+            if (err) return res.send({ "error": "Error saving request." });
+            Profile.findById(id, (err, user) => {
+                if (err) return res.send({ "error": "Wrong User Id." });
+                user.sent.push(fid);
+                user.save((e, u) => {
+                    if (e) return console.error(e);
+                    res.send({ "response": [u, friend] });
+                })
+            })
+        })
+    })
+})
+
     
     router.post('/addContact/:id/:fid',function(req,res){
 
@@ -169,35 +183,25 @@ function addContact(req,res){
    if(status==='Accept'){
       var id = req.params.id; //here id is the recippient of friend request
       var fid = req.params.fid;//id of person who sent the friend request
-
     Profile.find({"_id":{$in:[id,fid]}},(err,profiles)=>{
-
     if(err) return res.send({"response":err});
-      // var user = profiles[0];
-      // var friend=profiles[1];
     var user,friend;
       if(profile[0]._id.equals(id)){
           user = profile[0];
           friend=profile[1];
-
       }
       if(profile[0]._id.equals(fid)){
           user = friend[1];
           friend=prodile[0];
       }
-      
-    //here should be some logic to check if user exist in contact lsit or not but it looks like redundendt here.
-
+    //here should be some logic to check if user exist in contact list or not but it looks like redundendt here.
        user.save((e,u)=>{
   if(e) throw e;
       friend.save((e,f)=>{
-
          if(e)  throw e;
-        
          res.send({"response":[u,f]});
          removeRequest(id,fid);
       })
-
        })
     
     
@@ -219,34 +223,30 @@ else{
 
 
 function removeRequest(userId,friendId){
-  //userId => id of user who accepted or rejected the request 
-  //friendId => who requested to be friend
- //freind id will be in request array of userId
- //userId will be in set array of friendID
-  Requests.find({"_id":{$in:[userId,friendId]}},(err,docs)=>{
+  Profile.find({"_id":{$in:[userId,friendId]}},(err,docs)=>{
    console.log(docs);
     if(err)  return console.error(err);
          
-if(docs[0]._id.equals(userId)){
-     docs[0].requests.pull(friendId);
-     docs[1].sent.pull(userId);
-       }
-     else {
-        docs[1].requests.pull(friendId);
-        docs[0].sent.pull(userId);
+// if(docs[0]._id.equals(userId)){
+//      docs[0].requests.pull(friendId);
+//      docs[1].sent.pull(userId);
+//        }
+//      else {
+//         docs[1].requests.pull(friendId);
+//         docs[0].sent.pull(userId);
 
-      }
+//       }
       
-      console.log(docs[0].requests);
-        docs[0].save((e,u)=>{
+//       console.log(docs[0].requests);
+//         docs[0].save((e,u)=>{
 
-            if(e) throw e;
-            docs[1].save((e,f)=>{
+//             if(e) throw e;
+//             docs[1].save((e,f)=>{
 
-                if(e) throw e;
-                console.log([u,f]);
-            })
-        })
+//                 if(e) throw e;
+//                 console.log([u,f]);
+//             })
+//         })
    
 
   })

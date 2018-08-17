@@ -23,9 +23,11 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/login', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
   var password = req.body.password;
   var uname = req.body.uname;
   console.log(password);
+  console.log(uname);
   getUserByUname(uname,password,res);//uname can be email ,id or number 
 
   
@@ -173,10 +175,12 @@ function getUserByUname(uname,password,res) {
  //write regex to deffrectiate between email and number:=
   //check for password 
   //return response
-    //var phone= /^\+\d{1,3}\d{9,10}$/;
-   // var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-   var type={"phone":uname};
-
+  //   var phone= /^\+\d{1,3}\d{9,10}$/;
+  //  // var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //   var type = ''
+  //    if(phone.test(uname)){
+  let  type={ phone:uname}
+    
    console.log(type);
      User.findOne(type,(err,user)=>{
         if(err) return res.send({"error":err})
@@ -191,7 +195,7 @@ function getUserByUname(uname,password,res) {
         
        bcrypt.compare(password,user.password, function(err, isMatch) {
         // res == true
-         if(err) {  return res.send({"response":"some error in comapring"+err})}
+         if(err) {  return res.send({"response":"some error in comapring"})}
               
                 if(isMatch){
                     user.password=null
