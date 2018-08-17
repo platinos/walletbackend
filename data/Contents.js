@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 //var Profile = require('../data/Profile.js');
 var Comment = require('../data/Comment.js');
-var User = require('../data/user.js');
+var User = require('../data/User.js');
 const schema = mongoose.Schema;
 delete mongoose.connection.models['Content'];
 var contentSchema = new schema({

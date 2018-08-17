@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var User = require('../data/user.js');
+var User = require('../data/User.js');
 var Content = require('../data/Contents.js');
 var Wallet = require('../data/wallet.js')
 var Shop=require('../data/Shop.js')
