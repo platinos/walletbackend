@@ -1,5 +1,5 @@
 var express = require('express');
-var User = require('../data/user.js')
+var User = require('../data/User.js')
 var Profile = require('../data/Profile.js')
 var Requests = require('../data/FriendRequests')
 var router = express.Router();
