@@ -1,7 +1,7 @@
 
 var express = require('express');
 var Profile = require('../data/Profile.js')
-var User = require('../data/user.js')
+var User = require('../data/User.js')
 const mongoose = require('mongoose');
 
 var Requests = require('../data/FriendRequests')
