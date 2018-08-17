@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-var User = require('../data/User.js');
+var User = require('./User');
 var Content = require('../data/Contents.js');
-var Wallet = require('../data/wallet.js')
+var Wallet = require('./wallet')
 var Shop=require('../data/Shop.js')
 const Schema = mongoose.Schema;
 delete mongoose.connection.models['Profile'];
