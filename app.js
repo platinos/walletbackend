@@ -37,12 +37,14 @@ app.use(function (req, res, next) {
 
 //Database connection
 global.mongoose = require('mongoose');
-mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
+// Old Db Location
+// mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
+//   .then(() => console.log('connection succesful'))
+//   .catch((err) => console.error(err));
+
+mongoose.connect('mongodb://shequser:shequserpass1@ds117711.mlab.com:17711/sheq_sandbox')
   .then(() => console.log('connection succesful'))
   .catch((err) => console.error(err));
-
-
-
 
 
 app.use('/', indexRouter);
