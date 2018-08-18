@@ -4,7 +4,6 @@ var bitgo = new BitGo.BitGo({ accessToken:token}); // defaults to testnet. add e
 let coin = bitgo.coin('tbtc');
 bitgo.unlock({otp:'0000000'}).then(function(unlockRes){
 console.log(unlockRes);
-
 }); 
 module.exports=bitgo;
 
