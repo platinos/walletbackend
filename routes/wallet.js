@@ -195,18 +195,27 @@ function createMultipleWallets(req,res){
       let label = req.body.label;
       let passphrase =req.body.password;
       let id = req.params.id
-      let coin =req.body.coin
-    var data = {
+      var  coin =req.body.coin
+      var  type =req.body.type
+   /* var data = {
       "passphrase":passphrase ,
       "label": label,
       "backupXpubProvider": "keyternal"
-      }
-    
+      }  */
+      
+      var data={
+
+         passphrase:passphrase,
+         label:label,
+         //backupXpubProvider: 'keyternal'
+
+        }
+      
     bitgo.coin(coin).wallets().generateWallet(data, function(err, result) {
       if (err) { console.dir(err); throw new Error("Could not create wallet!"); }
       
  var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
-      "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase}
+      "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase,"type":type}
       data.addresses.push({"address":result.wallet._wallet.receiveAddress.address});
       
     Wallet.create(data,function (err,newWallet){
