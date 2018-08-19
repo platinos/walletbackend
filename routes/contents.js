@@ -236,6 +236,7 @@ function getAllContentPaged(req, res) {
         .skip(pageSize * page)
         .limit(pageSize)
         .populate({ path: 'user', select: 'name  ImageUrl _id' })
+        .populate({ path: 'parent', select: '',populate: { path: 'user', select: 'name ImageUrl _id' }})
         .populate('comments', 'comment likes user updated_at', null, { sort: { updated_at: -1 }, limit: 2, populate: { path: 'user', select: 'name ImageUrl _id' } }
         )
         .exec((err, contents) => {
@@ -281,8 +282,8 @@ function getAllContent(req,res){
     Content.find()
     .sort('-created_at')
     .populate({path:'user',select:'name  ImageUrl _id'})
-    .populate('parent')
-   .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
+    .populate({ path: 'parent', select: '',populate: { path: 'user', select: 'name ImageUrl _id' }})
+    .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
     )
     .exec((err,contents)=>{
           if(err) return res.send({"error":err});
@@ -300,7 +301,7 @@ function getAllContent(req,res){
                        "createdAt":item.created_at,
                        "updateAt":item.updated_at,
                        "isShared":item.isShared,
-                       "parentPost":item.parent,
+                       "parentContentId":item.parent,
                         "commentsCount":item.comments.length,
                         "image":item.image,
                         "comments":item.comments.map((item)=>{
