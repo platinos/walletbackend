@@ -10,8 +10,10 @@ router.get('/type/:type',function(req,res){
 
    getContentsByType(data,res);
     
+ })
 
-     })
+
+ router.get()
 /* GET users listing. */
 router.post('/', function (req, res, next) {
     getAllContentPaged(req,res);             //done
@@ -328,15 +330,40 @@ function getContentById(id,res) {
     res.setHeader('Content-Type', 'application/json');
     
 Content.findById(id).populate('likes.liker').populate('shares.sharedBy')
-.populate('user').populate('parent').populate('comments').exec((e,content)=>{
+.populate('user')
+.populate({ path: 'parent', select: '',populate: { path: 'user', select: 'name ImageUrl _id' }})
+.populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
+         )
+.exec((err,content)=>{
+    if(err) return res.send({"error":err});
 
-   if(e)  return console.error(e);
+    var item = content;
+    var doc = {
+                "content":item.content,
+                 "Id":item._id,
+                 "PostByUser":{"Id":item.user._id,"image":item.user.ImageUrl,"name":item.user.name},
+                 "likesCount":item.likes.length,
+                 "sharesCount":item.shares.length,
+                 "createdAt":item.created_at,
+                 "updateAt":item.updated_at,
+                 "isShared":item.isShared,
+                 "parentContentId":item.parent,
+                  "commentsCount":item.comments.length,
+                  "image":item.image,
+                  "comments":item.comments.map((item)=>{
+                        return {
+                              "Id":item._id, "byUser":item.user,"likesCount":item.likes.length,
+                               "updatedAt": item.updated_at
+                        }
+                  })
+     
 
-   res.send({"response":content});
-   
+        }
+       
+res.send({"response":doc});
 
 
-    }) 
+});
 
 
 }
@@ -349,16 +376,64 @@ function getContentByUserId(req,res) {
        var page = req.body.page;
        const pageSize=10;
        var skip = page*pageSize;
-Profile.find({_id:userId}).select('contents')
-.populate('contents','_id content updated_at',null
-,{sort: { 'updated_at': -1 },limit:10,skip:skip,populate:{path:'user',select:'name ImageUrl _id'},
-populate:{path:'comments',options:{limit:2}}}
-)
-.exec((err,contents)=>{
-  if(err) {   console.log(err); return res.send({"error":err});}
-  res.send({"response":contents});
- 
-    });
+Profile.findOne({_id:userId},(err,profile)=>{
+         if(err)  res.send(JSON.stringify({"error":err}))
+         if(!profile)  res.send(JSON.stringify({"error":"profileNotFound"}))
+        var contents = profile.contents;
+        if(contents===undefined || contents.length===0){
+            return res.send(JSON.stringify({"respone":"nocontents"}))
+          }
+
+        Content.find({ "_id": { "$in": contents } })
+        .sort('-updated_at')
+        .skip(pageSize * page)
+        .limit(pageSize)
+        .populate({ path: 'user', select: 'name  ImageUrl _id' })
+        .populate({ path: 'parent', select: '',populate: { path: 'user', select: 'name ImageUrl _id' }})
+        .populate('comments', 'comment likes user updated_at', null, { sort: { updated_at: -1 }, limit: 2, populate: { path: 'user', select: 'name ImageUrl _id' } }
+        )
+        .exec((err, contents) => {
+            if (err) return res.send({ "error": err });
+
+
+            var contentResponse = contents.map((item) => {
+                var doc = {
+                    "content": item.content,
+                    "Id": item._id,
+                    "PostByUser": { "Id": item.user._id, "image": item.user.ImageUrl, "name": item.user.name },
+                    "likesCount": item.likes.length,
+                    "sharesCount": item.shares.length,
+                    "createdAt": item.created_at,
+                    "updateAt": item.updated_at,
+                    "isShared": item.isShared,
+                    "parentContentId": item.parent,
+                    "commentsCount": item.comments.length,
+                    "comments": item.comments.map((item) => {
+                        return {
+                            "Id": item._id, "byUser": item.user, "likesCount": item.likes.length,
+                            "updatedAt": item.updated_at
+                        }
+                    })
+
+
+                }
+                return doc;
+
+
+            });
+            res.send({ "response": contentResponse });
+
+
+        });
+
+
+
+        })
+
+        
+       
+
+
      
 }
 
@@ -374,13 +449,27 @@ function getContentByTag(uname) {
 function updateContentById( req, res) {
     res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
-     Content.findById(id,(err,content)=>{
+    let data = {"content":req.body.content}
+    if(data.content===undefined || data.content===""){
+         return res.send(JSON.stringify({"error":"EmptyContentOrInvalidContent"}))
+       }
+    Content.findByIdAndUpdate(id,data,(err,content)=>{
+            if(err)  return res.send(JSON.stringify({"error":err}))
+            if(!content)  return res.send(JSON.stringify({"error":"invalidId"}))
+            Content.findById(content._id,(err,updatedContent)=>{
+                   if(err)  res.send(JSON.stringify({"error":err}))
+                   res.send(JSON.stringify({"response":updatedContent}))
+             
+          });
+
+    });
+    /* Content.findById(id,(err,content)=>{
           if(err)  throw err;
        var c = req.body.content;
      if(c){
         content.content=c;
        
-      }
+         }
 
       content.save((err,response)=>{
        if(err)   throw err;
@@ -389,7 +478,9 @@ function updateContentById( req, res) {
 
       });
 
-    });
+    }) */
+    
+    
 }
 
 
@@ -477,7 +568,7 @@ function getContentsByType(data,res){
               }
               Content.find({"type":type}).sort('-created_at')
               .populate({path:'user',select:'name  ImageUrl _id'})
-              .populate('parent')
+              .populate({ path: 'parent', select: '',populate: { path: 'user', select: 'name ImageUrl _id' }})
              .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
               )
               .exec((err,contents)=>{
@@ -499,7 +590,7 @@ function getContentsByType(data,res){
                                  "createdAt":item.created_at,
                                  "updateAt":item.updated_at,
                                  "isShared":item.isShared,
-                                 "parentPost":item.parent,
+                                 "parentContentId":item.parent,
                                   "commentsCount":item.comments.length,
                                   "image":item.image,
                                   "comments":item.comments.map((item)=>{
