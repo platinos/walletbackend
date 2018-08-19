@@ -12,8 +12,8 @@ var contentRouter = require('./routes/contents');
 var testdb = require('./routes/testdb');
 var commentRouter = require('./routes/comment');
 var walletRouter = require('./routes/wallet')
-var shopRouter = require('./routes/shop.js');
-
+var shopRouter = require('./routes/shop');
+var productRouter = require('./routes/product');
 var app = express();
 
 // view engine setup
@@ -25,11 +25,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req,res,next){
-    res.header("Access-Control-Allow-Origin","*");
-    res.header("Access-Control-Allow-Methods","GET,PUT,POST,DELETE");
-    res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept");
-    next();
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type,Accept");
+  next();
 
 
 
@@ -37,12 +37,14 @@ app.use(function(req,res,next){
 
 //Database connection
 global.mongoose = require('mongoose');
-mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
+// Old Db Location
+// mongoose.connect('mongodb://shequser:shequserpass1@ds133550.mlab.com:33550/mynosqldb')
+//   .then(() => console.log('connection succesful'))
+//   .catch((err) => console.error(err));
+
+mongoose.connect('mongodb://shequser:shequserpass1@ds117711.mlab.com:17711/sheq_sandbox')
   .then(() => console.log('connection succesful'))
   .catch((err) => console.error(err));
-
-
-
 
 
 app.use('/', indexRouter);
@@ -50,17 +52,18 @@ app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/content', contentRouter);
 app.use('/test', testdb);
-app.use('/api/v1/comment',commentRouter);
-app.use('/api/v1/wallet',walletRouter);
-app.use('/api/v1/shop',shopRouter);
+app.use('/api/v1/comment', commentRouter);
+app.use('/api/v1/wallet', walletRouter);
+app.use('/api/v1/shop', shopRouter);
+app.use('/api/v1/product', productRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

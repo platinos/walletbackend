@@ -23,9 +23,11 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.post('/login', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
   var password = req.body.password;
   var uname = req.body.uname;
   console.log(password);
+  console.log(uname);
   getUserByUname(uname,password,res);//uname can be email ,id or number 
 
   
@@ -63,6 +65,15 @@ router.put('/:id', function (req, res) {
   var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone,
   "password":req.body.password}
   updateUserById(id, data,res);
+
+});
+router.put('/updatepic/:id', function (req, res) {
+  var id = req.params.id;
+
+  var data = {
+    "ImageUrl": req.body.ImageUrl
+  }
+  updateUserById(id, data, res);
 
 });
 
@@ -164,17 +175,12 @@ function getUserByUname(uname,password,res) {
  //write regex to deffrectiate between email and number:=
   //check for password 
   //return response
-    var phone= /^\+\d{1,3}-\d{9,10}$/;
-    var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var type = ''
-     if(phone.test(uname)){
-        type={"phone":uname}
-
-        } 
-     if(email.test(uname)){
-
-       type= {"email":uname}
-     } 
+  //   var phone= /^\+\d{1,3}\d{9,10}$/;
+  //  // var email=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //   var type = ''
+  //    if(phone.test(uname)){
+  let  type={ phone:uname}
+    
    console.log(type);
      User.findOne(type,(err,user)=>{
         if(err) return res.send({"error":err})

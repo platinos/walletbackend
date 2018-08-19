@@ -1,7 +1,7 @@
 
 var express = require('express');
 var Profile = require('../data/Profile.js')
-var User = require('../data/user.js')
+var User = require('../data/User.js')
 const mongoose = require('mongoose');
 
 var Requests = require('../data/FriendRequests')
@@ -130,7 +130,7 @@ function getWallet(wId, coinType, res){
    };
    wallets.get(data, function callback(err, wallet) {
     if (err) {
-      return conmsole.error(err)
+      return console.error(err)
     }
     console.dir(wallet);
     res.send({"response":wallet._wallet});
@@ -194,6 +194,7 @@ function createMultipleWallets(req,res){
   function createWallet(req,res){
       let label = req.body.label;
       let passphrase =req.body.password;
+<<<<<<< HEAD
       let id = req.params.id
       var  coin =req.body.coin
       var  type =req.body.type
@@ -211,11 +212,26 @@ function createMultipleWallets(req,res){
 
         }
       
+=======
+      let id = req.params.id;
+      let coin =req.body.coin;
+      let type = req.body.type;
+    var data = {
+      "passphrase":passphrase ,
+      "label": label,
+      //"backupXpubProvider": "keyternal"
+      }
+    
+>>>>>>> d07efbb035f0f385c78b6c4eea6ceff2aa1d1a9a
     bitgo.coin(coin).wallets().generateWallet(data, function(err, result) {
       if (err) { console.dir(err); throw new Error("Could not create wallet!"); }
       
  var data = {"userId":id,"walletId":result.wallet._wallet.id,"userKeychain":result.userKeychain,
+<<<<<<< HEAD
       "backupKeychain":result.backupKeychain,"addresses":[],"passPhrase":passphrase,"type":type}
+=======
+   "backupKeychain": result.backupKeychain, "addresses": [], "passPhrase": passphrase, "type": type}
+>>>>>>> d07efbb035f0f385c78b6c4eea6ceff2aa1d1a9a
       data.addresses.push({"address":result.wallet._wallet.receiveAddress.address});
       
     Wallet.create(data,function (err,newWallet){

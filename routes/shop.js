@@ -6,6 +6,22 @@ var Wallet = require('../data/wallet.js')
 var Shop = require('../data/Shop.js')
 var router = express.Router();
 
+router.get('/', function (req, res, next) {
+
+  getAllShops(res);
+});
+function getAllShops(res) {
+  res.setHeader('Content-Type', 'application/json');
+  Shop.find(function (err, shop){
+    if (err) res.send(JSON.stringify({ "error": "No Shop Data", "response": null }));
+
+    res.send(JSON.stringify({ "status": 200, "error": null, "response": shop }));
+
+
+
+  }) 
+
+}
 
 router.post('/create',(req,res)=>{
   

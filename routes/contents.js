@@ -269,8 +269,9 @@ function getAllContent(req,res){
     res.setHeader('Content-Type', 'application/json');
 
     Content.find()
-    .sort('-updated_at')
+    .sort('-created_at')
     .populate({path:'user',select:'name  ImageUrl _id'})
+    .populate('parent')
    .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
     )
     .exec((err,contents)=>{
@@ -289,7 +290,7 @@ function getAllContent(req,res){
                        "createdAt":item.created_at,
                        "updateAt":item.updated_at,
                        "isShared":item.isShared,
-                       "parentContentId":item.parent,
+                       "parentPost":item.parent,
                         "commentsCount":item.comments.length,
                         "image":item.image,
                         "comments":item.comments.map((item)=>{

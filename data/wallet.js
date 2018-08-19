@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 var Profile = require('../data/Profile.js')
 const Schema = mongoose.Schema;
-var User = require('../data/user.js');
+var User = require('../data/User.js');
 var Shop = require('../data/Shop.js')
 //wallet to store userID and then wallets and their addresses.
 //store userId and wallet..
