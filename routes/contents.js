@@ -4,6 +4,14 @@ var Content = require('../data/Contents.js');
 const Profile = require('../data/Profile.js');
 var router = express.Router();
 
+router.get('/type/:type',function(req,res){
+
+  var data = {"type":req.params.type}
+
+   getContentsByType(data,res);
+    
+
+     })
 /* GET users listing. */
 router.post('/', function (req, res, next) {
     getAllContentPaged(req,res);             //done
@@ -170,9 +178,11 @@ function doShare(req,res){
 function postContent(req, res) {
     res.setHeader('Content-Type', 'application/json');
     var body = req.body.content;
+    var type=req.body.type;
+    var title = req.body.title;
     var id = req.params.id;
        //create content and assign id to content and save 
-       var data = {"content":body,"user":id,"image":req.body.image}
+       var data = {"content":body,"user":id,"image":req.body.image,"type":type,"title":title}
   Profile.findById(id,(err,profile)=>{
       if(err)  return res.send({"error":err});
       if(!profile) return res.send({"response":"InvalidUSerId"});
@@ -455,5 +465,63 @@ function getCommentsByContentId(req,res){
     });
 
 }
+
+
+
+function getContentsByType(data,res){
+    res.setHeader('Content-Type', 'application/json'); 
+           let type = data.type;
+           if(type===undefined || type.length===0){
+                return res.send(JSON.stringify({"error":"invalidType"}))
+              }
+              Content.find({"type":type}).sort('-created_at')
+              .populate({path:'user',select:'name  ImageUrl _id'})
+              .populate('parent')
+             .populate('comments','comment likes user updated_at',null, { sort: { updated_at: -1 },limit:2,populate:{path:'user',select:'name ImageUrl _id'}}
+              )
+              .exec((err,contents)=>{
+                    if(err) {
+                         
+                         return res.send(JSON.stringify({"error":err}))
+                    }
+             
+                    
+                 var contentResponse = contents.map((item)=>{
+                     
+                     
+                        var doc = {
+                                "content":item.content,
+                                 "Id":item._id,
+                                 "PostByUser":{"Id":item.user._id,"image":item.user.ImageUrl,"name":item.user.name},
+                                 "likesCount":item.likes.length,
+                                 "sharesCount":item.shares.length,
+                                 "createdAt":item.created_at,
+                                 "updateAt":item.updated_at,
+                                 "isShared":item.isShared,
+                                 "parentPost":item.parent,
+                                  "commentsCount":item.comments.length,
+                                  "image":item.image,
+                                  "comments":item.comments.map((item)=>{
+                                        return {
+                                              "Id":item._id, "byUser":item.user,"likesCount":item.likes.length,
+                                               "updatedAt": item.updated_at
+                                        }
+                                  })
+                     
+          
+                        }
+                        return doc;
+                          
+          
+                 }); 
+
+                
+                 
+                 return res.send(JSON.stringify({"response":contentResponse}))
+          
+              });
+          
+
+              }
 
 module.exports = router;

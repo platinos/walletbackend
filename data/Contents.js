@@ -13,7 +13,8 @@ var contentSchema = new schema({
       shares:[{sharedBy:{type: mongoose.Schema.Types.ObjectId, ref: 'User'}}],
       isShared:{type:schema.Types.Boolean,default:false},
       parent:{type: mongoose.Schema.Types.ObjectId, ref:'Content',autopopulate: true},
-      type:String
+      type:String,
+      title:String
        
         //ref array for likes
        //ref array for shares..
