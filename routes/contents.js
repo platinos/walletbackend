@@ -13,7 +13,20 @@ router.get('/type/:type',function(req,res){
  })
 
 
- router.get()
+ router.get('/type/project',function(req,res){
+   
+    var data = {"type":"project"}
+    getContentsByType(data,res);
+
+
+ })
+ router.get('/type/post',function(req,res){
+   
+    var data = {"type":"post"}
+    getContentsByType(data,res);
+
+
+ })
 /* GET users listing. */
 router.post('/', function (req, res, next) {
     getAllContentPaged(req,res);             //done
