@@ -14,11 +14,7 @@ function getAllShops(res) {
   res.setHeader('Content-Type', 'application/json');
   Shop.find(function (err, shop){
     if (err) res.send(JSON.stringify({ "error": "No Shop Data", "response": null }));
-
     res.send(JSON.stringify({ "status": 200, "error": null, "response": shop }));
-
-
-
   }) 
 
 }
@@ -43,27 +39,14 @@ function createShop(data,res){
     Shop.create(data,(err,shop)=>{
   if(err)  return res.send({"error":"err"})
   if(!shop) return res.send({"empty":"yes"})
-    /* Profile.find({_id: {$in: data.owners}},(err,profiles)=>{
-      for(profile in profiles){
-       profile.shops.push(shop._id);
-       profile.save();
-       
-      } 
-      
-      }); */
+
       Shop.find({_id:shop._id}).populate('owners').exec((err,shop)=>{
 
         if(err)  return res.send({"error":err})
         res.send({"response":shop})
-
       });
-     
     })
-
-
       }
-
-
    }
 
 router.get('/:id',(req,res)=>{

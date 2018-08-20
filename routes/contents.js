@@ -161,6 +161,7 @@ function doShare(req,res){
     var uId= req.params.user;
     var cId = req.params.content;
     var addedContent = req.body.content;
+    var type = req.body.type;
    Content.findById(cId,(err,content)=>{
        if(err)  return console.log(err);
         var newContent = new Content();
@@ -170,6 +171,7 @@ function doShare(req,res){
          newContent.user=uId;
          newContent.isShared=true;
          newContent.parent=cId;
+         newContent.type = type;
          newContent.save((err,newContent)=>{
          if(err)  throw err;
          console.log(newContent._id);
