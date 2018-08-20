@@ -596,6 +596,7 @@ function getContentsByType(data,res){
                      
                         var doc = {
                                 "content":item.content,
+                                "content":item.title,
                                  "Id":item._id,
                                  "PostByUser":{"Id":item.user._id,"image":item.user.ImageUrl,"name":item.user.name},
                                  "likesCount":item.likes.length,
