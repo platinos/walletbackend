@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
         image: req.body.Image,
         Price: req.body.Price,
         Quantity: req.body.Quantity,
-        shopId: req.body.shopId
+        userId: req.body.userId
     }
     console.log("hello");
     console.log(data);
