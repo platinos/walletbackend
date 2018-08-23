@@ -53,7 +53,7 @@ router.get('/user/:userId', (req, res) => {
     getAllProductsByUser(req, res);
 });
 function getAllProductsByUser(req, res) {
-     var userId: req.params.userId;
+     var userId = req.params.userId;
     res.setHeader('Content-Type', 'application/json');
     Product.findOne({ "userId": userId },(err, product)=> {
         if (err) res.send(JSON.stringify({ "error": "No product", "response": null }));
