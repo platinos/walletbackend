@@ -55,7 +55,7 @@ router.get('/user/:userId', (req, res) => {
 function getAllProductsByUser(req, res) {
      var userId = req.params.userId;
     res.setHeader('Content-Type', 'application/json');
-    Product.findAll({ "userId": userId },(err, product)=> {
+    Product.find({ "userId": userId },(err, product)=> {
         if (err) res.send(JSON.stringify({ "error": "No product", "response": null }));
 
         res.send(JSON.stringify({ "status": 200, "error": null, "response": product }));
