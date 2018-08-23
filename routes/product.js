@@ -48,6 +48,22 @@ function getAllProducts(res) {
 
 }
 
+router.get('/user/:userId', (req, res) => {
+   
+    getAllProductsByUser(req, res);
+});
+function getAllProductsByUser(req, res) {
+     var userId: req.params.userId;
+    res.setHeader('Content-Type', 'application/json');
+    Product.findOne({ "userId": userId },(err, product)=> {
+        if (err) res.send(JSON.stringify({ "error": "No product", "response": null }));
+
+        res.send(JSON.stringify({ "status": 200, "error": null, "response": product }));
+
+    })
+
+}
+
 router.put('/update/:productId', (req, res) => {
 
     updateProduct(req.params.productId, req.body, res);
