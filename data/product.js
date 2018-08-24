@@ -11,8 +11,9 @@ var ProductSchema = new Schema({
     image: String,
     Price: Number,
     Quantity: Number,
-
-});
+     
+    },
+    { timestamps: { createdAt: 'created_at', updatedAt:'updated_at' } });
 
 
 var Product = mongoose.model("Product", ProductSchema);
