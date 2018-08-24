@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
 function getAllProducts(res) {
     res.setHeader('Content-Type', 'application/json');
     Product.find().sort('-created_at')
-        .populate({ path: 'user', select: 'name  ImageUrl _id' })
+        .populate({ path: 'userId', select: 'name  ImageUrl _id' })
         .exec((err, product) => {
         if (err) res.send(JSON.stringify({ "error": "No product", "response": null }));
 
