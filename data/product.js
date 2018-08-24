@@ -5,7 +5,7 @@ var Shop = require('../data/Shop.js')
 const Schema = mongoose.Schema;
 delete mongoose.connection.models['Product'];
 var ProductSchema = new Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     Name: String,
     Desc: String,
     image: String,
