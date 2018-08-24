@@ -90,7 +90,7 @@ function updateProduct(id, data, res) {
 }
 
 router.get('/:product_id', (req, res) => {
-    Product.find((err, product) => {
+    Product.findById(req.params.productId, (err, product) => {
         if (err) throw err;
         res.send(product);
     });
