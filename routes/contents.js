@@ -5,7 +5,7 @@ const Profile = require('../data/Profile.js');
 var router = express.Router();
 
 
-router.get('/user/:userId', function (req, res) {
+router.get('/user/:userId/:type', function (req, res) {
     getAllContentByUser(req, res);
 })
 router.get('/type/:type',function(req,res){
@@ -299,7 +299,7 @@ function getAllContentPaged(req, res) {
 function getAllContentByUser(req, res) {
     res.setHeader('Content-Type', 'application/json');
 
-    Content.find({user: req.params.userId})
+    Content.find({user: req.params.userId, type: req.params.type})
         .sort('-created_at')
         .populate({ path: 'user', select: 'name  ImageUrl _id' })
         .populate({ path: 'parent', select: '', populate: { path: 'user', select: 'name ImageUrl _id' } })
