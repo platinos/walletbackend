@@ -324,6 +324,8 @@ function getAllContentByUser(req, res) {
                     "parentContentId": item.parent,
                     "commentsCount": item.comments.length,
                     "image": item.image,
+                    "type": item.type,
+                    "title": item.title,
                     "comments": item.comments.map((item) => {
                         return {
                             "Id": item._id, "byUser": item.user, "likesCount": item.likes.length,
