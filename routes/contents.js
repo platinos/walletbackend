@@ -5,7 +5,7 @@ const Profile = require('../data/Profile.js');
 var router = express.Router();
 
 
-router.get('user/:userId', function (req, res) {
+router.get('/user/:userId', function (req, res) {
     getAllContentByUser(req, res);
 })
 router.get('/type/:type',function(req,res){
