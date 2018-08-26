@@ -4,6 +4,10 @@ var Content = require('../data/Contents.js');
 const Profile = require('../data/Profile.js');
 var router = express.Router();
 
+
+router.get('user/:userId', function (req, res) {
+    getAllContentByUser(req, res);
+})
 router.get('/type/:type',function(req,res){
 
   var data = {"type":req.params.type}
@@ -272,6 +276,54 @@ function getAllContentPaged(req, res) {
                     "isShared": item.isShared,
                     "parentContentId": item.parent,
                     "commentsCount": item.comments.length,
+                    "comments": item.comments.map((item) => {
+                        return {
+                            "Id": item._id, "byUser": item.user, "likesCount": item.likes.length,
+                            "updatedAt": item.updated_at
+                        }
+                    })
+
+
+                }
+                return doc;
+
+
+            });
+            res.send({ "response": contentResponse });
+
+
+        });
+
+
+}
+function getAllContentByUser(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+
+    Content.find({user: req.params.userId})
+        .sort('-created_at')
+        .populate({ path: 'user', select: 'name  ImageUrl _id' })
+        .populate({ path: 'parent', select: '', populate: { path: 'user', select: 'name ImageUrl _id' } })
+        .populate('comments', 'comment likes user updated_at', null, { sort: { updated_at: -1 }, limit: 2, populate: { path: 'user', select: 'name ImageUrl _id' } }
+        )
+        .exec((err, contents) => {
+            if (err) return res.send({ "error": err });
+
+
+            var contentResponse = contents.map((item) => {
+                console.log(item);
+
+                var doc = {
+                    "content": item.content,
+                    "Id": item._id,
+                    "PostByUser": { "Id": item.user._id, "image": item.user.ImageUrl, "name": item.user.name },
+                    "likesCount": item.likes.length,
+                    "sharesCount": item.shares.length,
+                    "createdAt": item.created_at,
+                    "updateAt": item.updated_at,
+                    "isShared": item.isShared,
+                    "parentContentId": item.parent,
+                    "commentsCount": item.comments.length,
+                    "image": item.image,
                     "comments": item.comments.map((item) => {
                         return {
                             "Id": item._id, "byUser": item.user, "likesCount": item.likes.length,
