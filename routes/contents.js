@@ -520,7 +520,7 @@ function getContentByTag(uname) {
 function updateContentById( req, res) {
     res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
-    let data = {"content":req.body.content}
+    let data = req.body;
     if(data.content===undefined || data.content===""){
          return res.send(JSON.stringify({"error":"EmptyContentOrInvalidContent"}))
        }
