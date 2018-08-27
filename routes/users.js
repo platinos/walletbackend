@@ -62,8 +62,7 @@ router.put('/:id', function (req, res) {
   var email = req.body.email;
   var active = req.body.active;
  
-  var data = {"name":name,"email":email,"active":active,"ImageUrl":req.body.ImageUrl,"phone":req.body.phone,
-  "password":req.body.password}
+  var data = req.body;
   updateUserById(id, data,res);
 
 });
