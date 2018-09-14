@@ -13,7 +13,11 @@ router.get('/:phoneNo', function (request1, response, next) {
     };
 
     var req = request(options, function (error, res) {
+        if(error){
+            response.send(JSON.stringify({ "status": 200, "error": error}));
 
+        }
+        else
         response.send(JSON.stringify({ "status": 200, "error": null, "response": res }));
         
     });
