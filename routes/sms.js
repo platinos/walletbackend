@@ -12,18 +12,10 @@ router.get('/:phoneNo', function (request1, response, next) {
         "headers": {}
     };
 
-    var req = request(options, function (res) {
-        var chunks = [];
+    var req = request(options, function (error, res) {
 
-        res.on("data", function (chunk) {
-            chunks.push(chunk);
-        });
-
-        res.on("end", function () {
-            var body = Buffer.concat(chunks);
-            console.log(body.toString());
-            resonse.send(JSON.stringify({ "status": 200, "error": null, "response": body.toString() }));
-        });
+        response.send(JSON.stringify({ "status": 200, "error": null, "response": res }));
+        
     });
 
     req.end();
