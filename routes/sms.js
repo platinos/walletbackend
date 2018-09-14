@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 router.get('/:phoneNo', function (request1, response, next) {
-    res.setHeader('Content-Type', 'application/json');
+    response.setHeader('Content-Type', 'application/json');
 
     var options = {
         "method": "POST",
