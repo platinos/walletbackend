@@ -22,6 +22,7 @@ router.get('/:phoneNo', function (request, response, next) {
         res.on("end", function () {
             var body = Buffer.concat(chunks);
             console.log(body.toString());
+            resonse.send(JSON.stringify({ "status": 200, "error": null, "response": body }));
         });
     });
 
