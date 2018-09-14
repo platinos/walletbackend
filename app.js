@@ -14,6 +14,7 @@ var commentRouter = require('./routes/comment');
 var walletRouter = require('./routes/wallet')
 var shopRouter = require('./routes/shop');
 var productRouter = require('./routes/product');
+var smstRouter = require('./routes/sms');
 var app = express();
 
 // view engine setup
@@ -56,6 +57,7 @@ app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/wallet', walletRouter);
 app.use('/api/v1/shop', shopRouter);
 app.use('/api/v1/product', productRouter);
+app.use('/api/v1/sms', smstRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
