@@ -43,7 +43,7 @@ global.mongoose = require('mongoose');
 //   .then(() => console.log('connection succesful'))
 //   .catch((err) => console.error(err));
 
-mongoose.connect('mongodb://shequser:shequserpass1@ds117711.mlab.com:17711/sheq_sandbox')
+mongoose.connect('') //DB url
   .then(() => console.log('connection succesful'))
   .catch((err) => console.error(err));
 
